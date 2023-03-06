@@ -1,20 +1,39 @@
 #include "GamePanel.hpp"
 
-GamePanel::GamePanel(int windowWidth, int windowHeight) : WIDTH(windowWidth), HEIGHT(windowHeight), textures(new raylib::Texture2D*[53]), card(5, 0, 1000, 100, 1000, 100, textures) {
+GamePanel::GamePanel(int windowWidth, int windowHeight)
+ : WIDTH(windowWidth), HEIGHT(windowHeight), textures(new raylib::Texture2D*[53]), background("../resources/images/table.png"), state(waitingForAction) {
 
     loadCardTextures();
-
 }
 
 void GamePanel::update() {
-    card.update();
+
+    //Updating cards
+    for (Card card: cards) {
+        card.update();
+    }
 }
 
 void GamePanel::draw() {
 
-    ClearBackground(PURPLE);
-    card.draw();
-    DrawFPS(100, 100);
+    background.Draw(0, 0);
+
+    if (state == inMenu) {
+        drawMenu();
+        return;
+    }
+
+    //Drawing cards
+    for (Card card: cards) {
+        card.draw();
+    }
+
+
+    DrawFPS(0, 0);
+}
+
+void GamePanel::drawMenu() {
+
 }
 
 //Method to load the 53 card textures into an array

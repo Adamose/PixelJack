@@ -5,7 +5,7 @@
 int main() {
 
     //Creating window instance
-    raylib::Window window(1280, 720);
+    raylib::Window window(1024, 500);
     
     //Setting window's properties
     window.SetTargetFPS(30);

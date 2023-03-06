@@ -1,8 +1,14 @@
 #ifndef GAMEPANEL_H
 #define GAMEPANEL_H
 
+#include <vector>
 #include "raylib-cpp.hpp"
 #include "Card.hpp"
+
+//inMenu: showing menu waiting for player to press play
+//waitingForBet: waiting for player to press bet
+//waitingForAction: waiting for player to select and action for their hand
+enum State { inMenu, waitingForBet, waitingForAction };
 
 class GamePanel {
 
@@ -17,9 +23,14 @@ class GamePanel {
 
     private:
         void loadCardTextures();
-        raylib::Texture2D** const textures;      //pointer to a dynamically allocated array of card textures
-        Card card;
+        void drawMenu();
 
+        std::vector<Card> cards;
+        State state;
+
+        raylib::Texture2D const background;     //texture to draw as background
+        raylib::Texture2D** const textures;     //pointer to a dynamically allocated array of card textures
+    
 };
 
 #endif

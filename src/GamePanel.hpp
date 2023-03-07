@@ -14,6 +14,7 @@ class GamePanel {
 
     public:
         GamePanel(int windowWidth, int windowHeight);
+        ~GamePanel();
 
         void update(); 
         void draw();
@@ -25,11 +26,11 @@ class GamePanel {
         void loadCardTextures();
         void drawMenu();
 
-        std::vector<Card> cards;
+        raylib::Texture2D* cardTextures[53];    //array of pointers for card textures
+        std::vector<Card*> cards;               //dynamic array of card pointers
         State state;
 
         raylib::Texture2D const background;     //texture to draw as background
-        raylib::Texture2D** const textures;     //pointer to a dynamically allocated array of card textures
     
 };
 

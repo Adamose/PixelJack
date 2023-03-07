@@ -16,7 +16,7 @@ class Card {
     private:
         const int id;                           //id used to pick the card texture to draw from 52 possible cards (id 0 is the back of a card)
         const int value;                        //value of card in terms of blackjack rule (face cards are 10, ace is 1/11)
-        raylib::Texture2D** const textures;     //pointer to a dynamically allocated array of texture pointers
+        raylib::Texture2D** const textures;     //array of pointers for card textures
 
         raylib::Vector2 realLocation;           //card's current location (starts at top right)
         raylib::Vector2 location;               //location to be/move to

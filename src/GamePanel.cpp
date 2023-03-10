@@ -2,7 +2,7 @@
 
 //Constructor
 GamePanel::GamePanel(int windowWidth, int windowHeight)
- : WIDTH(windowWidth), HEIGHT(windowHeight), background("../resources/images/table.png"), state(waitingForAction) {
+ : WIDTH(windowWidth), HEIGHT(windowHeight), background("../resources/images/table.png"), state(waitingForAction), chipPanel(balance, bet) {
 
     loadCardTextures();
 }
@@ -27,6 +27,8 @@ void GamePanel::update() {
     for (Card* card: cards) {
         card->update();
     }
+
+    chipPanel.update();
 }
 
 //Method to draw a frame
@@ -44,7 +46,7 @@ void GamePanel::draw() {
         card->draw();
     }
 
-
+    chipPanel.draw();
     DrawFPS(0, 0);
 }
 
@@ -56,7 +58,7 @@ void GamePanel::drawMenu() {
 //Method to load the 53 card textures into an array
 void GamePanel::loadCardTextures() {
 
-    //Getting texture files' paths
+    //Getting textures files' paths
     FilePathList files = LoadDirectoryFiles("../resources/images/cards");
 
     //Creating the 53 card textures (this needs the images/cards directory to be organized in alphabetic order)

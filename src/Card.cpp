@@ -1,7 +1,7 @@
 #include "Card.hpp"
 
-Card::Card(int id, int value, int x, int y, int initialX, int initialY, raylib::Texture2D** textures)
- : id(id), value(value), location(x, y), realLocation(initialX, initialY), textures(textures) {}
+Card::Card(int id, int value, int x, int y, raylib::Texture2D** textures)
+ : id(id), value(value), realLocation(x, y), textures(textures) {}
 
 //Method to animate card's movement
 void Card::update() {

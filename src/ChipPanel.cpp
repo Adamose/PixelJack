@@ -2,7 +2,7 @@
 
 //Constructor
 ChipPanel::ChipPanel(int& balance, int& bet)
- : x(324), realY(-100), y(realY), balance(balance), bet(bet) {
+ : x(291), realY(-130), y(realY), balance(balance), bet(bet), tray("../resources/images/tray.png") {
 
     loadChipTextures();
 }
@@ -52,7 +52,7 @@ void ChipPanel::update() {
 void ChipPanel::draw() const {
 
     //Drawing chip tray
-    DrawRectangle(x, realY, 375, 73, LIGHTGRAY);
+    tray.Draw(raylib::Vector2 {x, realY}, 0.0f, 3.0f);
 
     //Getting mouse position
     raylib::Vector2 mouse = GetMousePosition();
@@ -61,7 +61,7 @@ void ChipPanel::draw() const {
     for (int i = 0; i < 5; i++) {
 
         //Getting chip's position
-        raylib::Vector2 chipPosition(x + 10 + (i*73), realY + 5);
+        raylib::Vector2 chipPosition(x + 33 + (i * 78), realY + 33);
 
         //Checking if mouse is on chip, if so draw chip with a gray tint
         if (CheckCollisionPointRec(mouse, raylib::Rectangle(chipPosition.x, chipPosition.y, 63, 63))) {

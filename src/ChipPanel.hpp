@@ -23,6 +23,7 @@ class ChipPanel {
         int realY;                              //panel's current vertical location
         int y;                                  //vertical location to be/move to
         raylib::Texture2D* chipTextures[5];     //array of chip texture pointers
+        raylib::Texture2D tray;                 //tray texture
 
         const int x;
 

@@ -11,6 +11,11 @@ void Card::update() {
 
         //Use linear interpolation to move card
         realLocation = Vector2Lerp(realLocation, location, 0.15f);
+
+        //Checking if card reached it's location
+        if (realLocation.Equals(location)) {
+            realLocation = location;
+        }
     }
 }
 

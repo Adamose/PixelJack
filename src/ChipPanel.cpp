@@ -14,7 +14,7 @@ ChipPanel::~ChipPanel() {
     }
 }
 
-//Method to animate panel's movement and to process user clicks
+//Method to animate panel's movement
 void ChipPanel::update() {
 
     //Checking if panel needs to move
@@ -41,18 +41,13 @@ void ChipPanel::update() {
         //return because player can't interact with panel if it's moving
         return;
     }
-
-    //Checking for user clicks
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        show();
-    }
 }
 
 //Method to draw panel
 void ChipPanel::draw() const {
 
     //Drawing chip tray
-    tray.Draw(raylib::Vector2 {x, realY}, 0.0f, 3.0f);
+    tray.Draw(raylib::Vector2(x, realY), 0.0f, 3.0f);
 
     //Getting mouse position
     raylib::Vector2 mouse = GetMousePosition();

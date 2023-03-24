@@ -1,5 +1,5 @@
 LIB = -lraylib -lopengl32 -lgdi32 -lwinmm
-OBJ = Main.o GamePanel.o ChipPanel.o Card.o
+OBJ = Main.o GamePanel.o ChipPanel.o Card.o Button.o
 
 all: $(OBJ)
 	g++ -o PixelJack $(OBJ) $(LIB) ../resources/misc/PixelJack.res
@@ -15,6 +15,9 @@ ChipPanel.o: ChipPanel.cpp ChipPanel.hpp
 
 Card.o: Card.cpp Card.hpp
 	g++ -c Card.cpp
+
+Button.o: Button.cpp Button.hpp
+	g++ -c Button.cpp
 
 clean:
 	rm -f PixelJack.exe $(OBJ)

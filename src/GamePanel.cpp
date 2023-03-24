@@ -2,9 +2,11 @@
 
 //Constructor
 GamePanel::GamePanel(int windowWidth, int windowHeight)
- : WIDTH(windowWidth), HEIGHT(windowHeight), background("../resources/images/table.png"), state(waitingForAction), chipPanel(balance, bet) {
+ : WIDTH(windowWidth), HEIGHT(windowHeight), background("../resources/images/table.png"), button(200, 200, 400, 250, "../resources/images/buttons/BET.png"),
+   state(waitingForAction), chipPanel(balance, bet) {
 
     loadCardTextures();
+    button.show();
 }
 
 GamePanel::~GamePanel() {
@@ -29,6 +31,8 @@ void GamePanel::update() {
     }
 
     chipPanel.update();
+
+    button.update();
 }
 
 //Method to draw a frame
@@ -47,6 +51,7 @@ void GamePanel::draw() {
     }
 
     chipPanel.draw();
+    button.draw();
     DrawFPS(0, 0);
 }
 

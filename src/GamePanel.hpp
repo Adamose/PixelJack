@@ -30,13 +30,14 @@ class GamePanel {
 
         int balance;
         int bet;
-        Button button;
+        Button betButton;
+        Button hitButton;
+        Button standButton;
+        Button splitButton;
         raylib::Texture2D* cardTextures[53];    //array of pointers for card textures
         std::vector<Card*> cards;               //dynamic array of card pointers
-        State state;
-        ChipPanel chipPanel;
-
-
+        State state;                            //current state of the program
+        ChipPanel chipPanel;                    //chipPanel used to get user's bet
         raylib::Texture2D const background;     //texture to draw as background
     
 };

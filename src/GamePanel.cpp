@@ -2,11 +2,16 @@
 
 //Constructor
 GamePanel::GamePanel(int windowWidth, int windowHeight)
- : WIDTH(windowWidth), HEIGHT(windowHeight), background("../resources/images/table.png"), button(200, 200, 400, 250, "../resources/images/buttons/BET.png"),
-   state(waitingForAction), chipPanel(balance, bet) {
+ : WIDTH(windowWidth), HEIGHT(windowHeight), background("../resources/images/table.png"), betButton(0, 0, 100, 250, "../resources/images/buttons/BET.png"),
+   hitButton(0, 0, 200, 250, "../resources/images/buttons/HIT.png"), standButton(0, 0, 300, 250, "../resources/images/buttons/STAND.png"),
+   splitButton(0, 0, 400, 250, "../resources/images/buttons/SPLIT.png"), state(waitingForAction), chipPanel(balance, bet) {
 
+    betButton.show();
+    hitButton.show();
+    standButton.show();
+    splitButton.show();
+    
     loadCardTextures();
-    button.show();
 }
 
 GamePanel::~GamePanel() {
@@ -30,9 +35,13 @@ void GamePanel::update() {
         card->update();
     }
 
-    chipPanel.update();
+    //Updating buttons
+    betButton.update();
+    hitButton.update();
+    standButton.update();
+    splitButton.update();
 
-    button.update();
+    chipPanel.update();
 }
 
 //Method to draw a frame
@@ -50,8 +59,13 @@ void GamePanel::draw() {
         card->draw();
     }
 
+    //Updating buttons
+    betButton.draw();
+    hitButton.draw();
+    standButton.draw();
+    splitButton.draw();
+
     chipPanel.draw();
-    button.draw();
     DrawFPS(0, 0);
 }
 

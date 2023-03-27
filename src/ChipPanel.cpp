@@ -9,6 +9,8 @@ ChipPanel::ChipPanel(int& balance, int& bet)
 
 //Deconstructor
 ChipPanel::~ChipPanel() {
+
+    //Deallocating chip textures
     for (int i = 0; i < 5; i++) {
         delete chipTextures[i];
     }

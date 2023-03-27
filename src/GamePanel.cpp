@@ -1,10 +1,9 @@
 #include "GamePanel.hpp"
 
-//Constructor
 GamePanel::GamePanel(int windowWidth, int windowHeight)
  : WIDTH(windowWidth), HEIGHT(windowHeight), background("../resources/images/table.png"), betButton(0, 0, 100, 250, "../resources/images/buttons/BET.png"),
-   hitButton(0, 0, 200, 250, "../resources/images/buttons/HIT.png"), standButton(0, 0, 300, 250, "../resources/images/buttons/STAND.png"),
-   splitButton(0, 0, 400, 250, "../resources/images/buttons/SPLIT.png"), state(waitingForAction), chipPanel(balance, bet) {
+   hitButton(0, 0, 924, 445, "../resources/images/buttons/HIT.png"), standButton(0, 0, 824, 445, "../resources/images/buttons/STAND.png"),
+   splitButton(0, 0, 924, 390, "../resources/images/buttons/SPLIT.png"), state(waitingForAction), chipPanel(balance, bet) {
 
     betButton.show();
     hitButton.show();
@@ -47,19 +46,19 @@ void GamePanel::update() {
 //Method to draw a frame
 void GamePanel::draw() {
 
-    background.Draw(0, 0);
-
     if (state == inMenu) {
         drawMenu();
         return;
     }
+
+    background.Draw(0, 0);
 
     //Drawing cards
     for (Card* card: cards) {
         card->draw();
     }
 
-    //Updating buttons
+    //Drawing buttons
     betButton.draw();
     hitButton.draw();
     standButton.draw();
@@ -71,7 +70,7 @@ void GamePanel::draw() {
 
 //Method to draw menu
 void GamePanel::drawMenu() {
-
+    background.Draw(0, 0);
 }
 
 //Method to load the 53 card textures into an array

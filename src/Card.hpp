@@ -6,7 +6,7 @@
 class Card {
 
     public:
-        Card(int id, int value, int x, int y, raylib::Texture2D** textures);
+        Card(int id, int x, int y, raylib::Texture2D** textures);
 
         void update();
         void draw() const;

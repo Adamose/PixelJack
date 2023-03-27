@@ -36,6 +36,9 @@ class GamePanel {
         Button splitButton;
         raylib::Texture2D* cardTextures[53];    //array of pointers for card textures
         std::vector<Card*> cards;               //dynamic array of card pointers
+        std::vector<Card*> dealerHand;          //dynamic array of card pointers that are currently in the dealer's hand
+        std::vector<Card*> playerHandOne;       //dynamic array of card pointers that are currently in the player's first hand
+        std::vector<Card*> playerHandTwo;       //dynamic array of card pointers that are currently in the player's second hand
         State state;                            //current state of the program
         ChipPanel chipPanel;                    //chipPanel used to get user's bet
         raylib::Texture2D const background;     //texture to draw as background

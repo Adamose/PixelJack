@@ -1,7 +1,7 @@
 #include "GamePanel.hpp"
 
-GamePanel::GamePanel(int windowWidth, int windowHeight)
- : WIDTH(windowWidth), HEIGHT(windowHeight), background("../resources/images/table.png"), betButton(0, 0, 100, 250, "../resources/images/buttons/BET.png"),
+GamePanel::GamePanel()
+ : background("../resources/images/table.png"), betButton(0, 0, 10, 445, "../resources/images/buttons/BET.png"),
    hitButton(0, 0, 924, 445, "../resources/images/buttons/HIT.png"), standButton(0, 0, 824, 445, "../resources/images/buttons/STAND.png"),
    splitButton(0, 0, 924, 390, "../resources/images/buttons/SPLIT.png"), state(waitingForAction), chipPanel(balance, bet) {
 

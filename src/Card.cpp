@@ -6,16 +6,17 @@ Card::Card(int id, int x, int y, raylib::Texture2D** textures)
 //Method to animate card's movement
 void Card::update() {
 
-    //Checking if card needs to move
+    //Checking if card doesn't need to move
     if (realLocation != location) {
+        return;
+    }
 
-        //Use linear interpolation to move card
-        realLocation = Vector2Lerp(realLocation, location, 0.15f);
+    //Use linear interpolation to move card
+    realLocation = Vector2Lerp(realLocation, location, 0.15f);
 
-        //Checking if card reached it's location
-        if (realLocation.Equals(location)) {
-            realLocation = location;
-        }
+    //Checking if card reached it's location (check if rounded reallocation is same as location)
+    if (raylib::Vector2(realLocation.x, realLocation.y) == location) {
+        realLocation = location;
     }
 }
 

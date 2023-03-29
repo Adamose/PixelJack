@@ -7,16 +7,17 @@ Button::Button(int hideX, int hideY, int showX, int showY, const std::string& te
 //Method to animate button's movement
 void Button::update() {
 
-    //Checking if button needs to move
-    if (realLocation != location) {
-       
-        //Use linear interpolation to move button
-        realLocation = Vector2Lerp(realLocation, location, 0.10f);
+    //Checking if button doesn't need to move
+    if (realLocation == location) {
+        return;
+    }
 
-        //Checking if button reached it's location
-        if (realLocation.Equals(location)) {
-            realLocation = location;
-        }
+    //Use linear interpolation to move button
+    realLocation = Vector2Lerp(realLocation, location, 0.10f);
+       
+    //Checking if button reached it's location (check if rounded reallocation is same as location)
+    if (raylib::Vector2(roundf(realLocation.x), roundf(realLocation.y)) == location) {
+        realLocation = location;
     }
 }
 

@@ -15,14 +15,11 @@ enum State { inMenu, waitingForBet, waitingForAction };
 class GamePanel {
 
     public:
-        GamePanel(int windowWidth, int windowHeight);
+        GamePanel();
         ~GamePanel();
 
         void update(); 
         void draw();
-
-        const int WIDTH;
-        const int HEIGHT;
 
     private:
         void loadCardTextures();

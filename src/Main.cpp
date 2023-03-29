@@ -13,7 +13,7 @@ int main() {
     window.SetTitle("Pixel Jack");
 
     //Creating GamePanel instance
-    GamePanel panel(window.GetWidth(), window.GetHeight());
+    GamePanel panel;
 
     //Game loop running at 30hz
     while (!window.ShouldClose()) {

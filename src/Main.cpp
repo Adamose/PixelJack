@@ -19,8 +19,7 @@ int main() {
     while (!window.ShouldClose()) {
         window.BeginDrawing();
 
-        //Updating and drawing frame
-        panel.update();
+        //Drawing frame
         panel.draw();
 
         window.EndDrawing();

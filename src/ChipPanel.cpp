@@ -1,8 +1,8 @@
 #include "ChipPanel.hpp"
 
 //Constructor
-ChipPanel::ChipPanel(int& balance, int& bet)
- : x(291), realY(-130), y(realY), balance(balance), bet(bet), tray("../resources/images/tray.png") {
+ChipPanel::ChipPanel(int& balance, int& betAmount)
+ : x(291), realY(-130), y(realY), balance(balance), betAmount(betAmount), tray("../resources/images/tray.png") {
 
     loadChipTextures();
 }
@@ -95,5 +95,5 @@ void ChipPanel::show(){
 
 //Set panel's vertical location to be off screen
 void ChipPanel::hide(){
-    y = -100;
+    y = -126;
 }

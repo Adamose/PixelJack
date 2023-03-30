@@ -7,17 +7,48 @@ Button::Button(int hideX, int hideY, int showX, int showY, const std::string& te
 //Method to animate button's movement
 void Button::update() {
 
-    //Checking if button doesn't need to move
-    if (realLocation == location) {
-        return;
+    //Checking if button needs to move horizontally
+    if (realLocation.x != location.x) {
+
+        //Checking which direction to move
+        if (realLocation.x < location.x) {
+            realLocation.x += 5;
+
+            //Checking if moved too far
+            if (realLocation.x > location.x) {
+                realLocation.x = location.x;
+            }
+
+        } else {
+            realLocation.x -= 5;
+
+            //Checking if moved too far
+            if (realLocation.x < location.x) {
+                realLocation.x = location.x;
+            }
+        }
     }
 
-    //Use linear interpolation to move button
-    realLocation = Vector2Lerp(realLocation, location, 0.10f);
-       
-    //Checking if button reached it's location (check if rounded reallocation is same as location)
-    if (raylib::Vector2(roundf(realLocation.x), roundf(realLocation.y)) == location) {
-        realLocation = location;
+    //Checking if button needs to move vertically
+    if (realLocation.y != location.y) {
+
+        //Checking which direction to move
+        if (realLocation.y < location.y) {
+            realLocation.y += 5;
+
+            //Checking if moved too far
+            if (realLocation.y > location.y) {
+                realLocation.y = location.y;
+            }
+
+        } else {
+            realLocation.y -= 5;
+
+            //Checking if moved too far
+            if (realLocation.y < location.y) {
+                realLocation.y = location.y;
+            }
+        }
     }
 }
 
@@ -52,18 +83,18 @@ void Button::draw() const {
 //Checks if button was pressed
 bool Button::isPressed() const {
 
-    //Checking if mouse left button was pressed
-    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    //Checking if mouse left button was released
+    if (!IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
         return false;
     }
-
+   
     //Checking if button is visible on screen
     if (realLocation != showLocation) {
         return false;
     }
 
     //Return the resut of collision check
-    return CheckCollisionPointRec(GetMousePosition(), raylib::Rectangle(realLocation.x, realLocation.y, 30, 15));
+    return CheckCollisionPointRec(GetMousePosition(), raylib::Rectangle(realLocation.x, realLocation.y, 90, 45));
 }
 
 //Sets button location to be the hide location, this moves the button off the screen

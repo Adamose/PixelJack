@@ -7,7 +7,7 @@
 class ChipPanel {
 
     public:
-        ChipPanel(int& balance, int& bet);
+        ChipPanel(int& balance, int& betAmount);
         ~ChipPanel();
 
         void update();
@@ -19,7 +19,7 @@ class ChipPanel {
         void loadChipTextures();
 
         int& balance;                           //user's balance referenced from GamePanel that created this ChipPanel
-        int& bet;                               //user's current bet amount referenced from GamePanel that created this ChipPanel
+        int& betAmount;                               //user's current bet amount referenced from GamePanel that created this ChipPanel
         int realY;                              //panel's current vertical location
         int y;                                  //vertical location to be/move to
         raylib::Texture2D* chipTextures[5];     //array of chip texture pointers

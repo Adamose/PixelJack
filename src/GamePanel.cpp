@@ -4,7 +4,7 @@ GamePanel::GamePanel()
  : background("../resources/images/table.png"), betButton(1024, 445, 924, 445, "../resources/images/buttons/BET.png"),
    hitButton(924, 500, 924, 445, "../resources/images/buttons/HIT.png"), standButton(824, 500, 824, 445, "../resources/images/buttons/STAND.png"),
    splitButton(1024, 390, 924, 390, "../resources/images/buttons/SPLIT.png"), font("../resources/misc/monobit.ttf", 256), 
-   balancePanel("../resources/images/BalancePanel.png"), state(WAITING_FOR_BET), chipPanel(balance, betAmount), balance(0) {
+   balancePanel("../resources/images/BalancePanel.png"), state(WAITING_FOR_BET), chipPanel(balance, betAmount), balance(1000) {
 
     chipPanel.show();
     betButton.show();

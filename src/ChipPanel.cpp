@@ -60,10 +60,10 @@ void ChipPanel::draw() const {
         //Getting chip's position
         raylib::Vector2 chipPosition(x + 33 + (i * 78), realY + 33);
 
-        //Checking if mouse is on chip, if so draw chip with a gray tint
+        //Checking if mouse is on chip, if so draw chip with a dark gray tint
         if (CheckCollisionPointRec(mouse, raylib::Rectangle(chipPosition.x, chipPosition.y, 63, 63))) {
 
-            //Checking if mouse is pressed, if so draw chip with yellow tint
+            //Checking if mouse is pressed, if so draw chip with grey tint
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
                 chipTextures[i]->Draw(chipPosition, 0.0f, 3.0f, GRAY);
             } else {

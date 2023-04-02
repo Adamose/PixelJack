@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <thread>
+#include <chrono>
 #include "raylib-cpp.hpp"
 #include "Card.hpp"
 #include "ChipPanel.hpp"
@@ -24,8 +26,6 @@ class GamePanel {
     private:
         void loadCardTextures();
         void update();                         //Updating game components
-        void waitingForBet();
-        void waitingForMove();
         void drawMenu();
 
         //Button handlers

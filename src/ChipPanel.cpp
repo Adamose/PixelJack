@@ -97,3 +97,8 @@ void ChipPanel::show(){
 void ChipPanel::hide(){
     y = -126;
 }
+
+//Method to check if chipPanel is currently moving
+bool ChipPanel::isMoving() const {
+    return realY != y;
+}

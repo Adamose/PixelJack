@@ -14,6 +14,7 @@ class ChipPanel {
         void draw() const;
         void show();
         void hide();
+        bool isMoving() const;
 
     private:
         void loadChipTextures();

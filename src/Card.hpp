@@ -10,8 +10,9 @@ class Card {
 
         void update();
         void draw() const;
-        void setX(int x);
-        void setY(int y);
+        void setLocation(int x, int y);
+        bool isMoving() const;
+        int getValue() const;
 
     private:
         const int id;                           //id used to pick the card texture to draw from 52 possible cards (id 0 is the back of a card)

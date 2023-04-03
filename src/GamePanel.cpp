@@ -86,18 +86,6 @@ void GamePanel::drawMenu() {
     background.Draw(0, 0);
 }
 
-//Method to load the 53 card textures into an array
-void GamePanel::loadCardTextures() {
-
-    //Getting textures files' paths
-    FilePathList files = LoadDirectoryFiles("../resources/images/cards");
-
-    //Creating the 53 card textures (this needs the images/cards directory to be organized in alphabetic order)
-    for (int i = 0; i < 53; i++) {
-        cardTextures[i] = new raylib::Texture2D(files.paths[i]);
-    }
-}
-
 //Method called when the user pressed the bet button (runs on side thread)
 void GamePanel::bet() {
 
@@ -112,28 +100,30 @@ void GamePanel::bet() {
     Card* temporaryCard;
 
     //Drawing dealer's first card
-    temporaryCard = new Card(0, 430, 40, cardTextures);
+    temporaryCard = new Card(getCardId(), 430, 40, cardTextures);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing player's first card
-    temporaryCard = new Card(0, 430, 300, cardTextures);
+    temporaryCard = new Card(getCardId(), 490, 300, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing dealer's second card
-    temporaryCard = new Card(0, 510, 40, cardTextures);
+    temporaryCard = new Card(getCardId(), 510, 40, cardTextures);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Drawing player's second card
-    temporaryCard = new Card(0, 510, 300, cardTextures);
+    temporaryCard = new Card(getCardId(), 512, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     while (temporaryCard->isMoving()) {}
+
+    //Check if player got a blackjack
 
     //Showing action buttons
     hitButton.show();
@@ -143,12 +133,16 @@ void GamePanel::bet() {
     if (playerHandOne[0]->getValue() == playerHandOne[1]->getValue()) {
         splitButton.show();
     }
-
 }
 
 //Method called when the user pressed the hit button
 void GamePanel::hit() {
 
+    //Draw another player card
+
+    //Check if player busted
+
+    //Check if player got 21
 }
 
 //Method called when the user pressed the stand button
@@ -159,4 +153,27 @@ void GamePanel::stand() {
 //Method called when the user pressed the split button
 void GamePanel::split() {
 
+}
+
+//Method to load the 53 card textures into an array
+void GamePanel::loadCardTextures() {
+
+    //Getting textures files' paths
+    FilePathList files = LoadDirectoryFiles("../resources/images/cards");
+
+    //Creating the 53 card textures (this needs the images/cards directory to be organized in alphabetic order)
+    for (int i = 0; i < 53; i++) {
+        cardTextures[i] = new raylib::Texture2D(files.paths[i]);
+    }
+}
+
+//Method to get a random number between 0 and 51
+int GamePanel::getCardId() const {
+
+    //Static variables only initialized once during program execution
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(0, 51);
+
+    return dis(gen);
 }

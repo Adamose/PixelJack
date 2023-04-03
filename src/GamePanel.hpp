@@ -5,6 +5,7 @@
 #include <string>
 #include <thread>
 #include <chrono>
+#include <random>
 #include "raylib-cpp.hpp"
 #include "Card.hpp"
 #include "ChipPanel.hpp"
@@ -21,11 +22,12 @@ class GamePanel {
         GamePanel();
         ~GamePanel();
 
-        void draw();                           //Drawing one frame
+        void draw();
 
     private:
         void loadCardTextures();
-        void update();                         //Updating game components
+        int getCardId() const;
+        void update();
         void drawMenu();
 
         //Button handlers

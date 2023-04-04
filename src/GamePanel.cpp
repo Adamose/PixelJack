@@ -44,7 +44,6 @@ void GamePanel::update() {
     if (hitButton.isPressed()) std::thread (hit, this).detach();
     if (standButton.isPressed()) std::thread(stand, this).detach();
     if (splitButton.isPressed()) std::thread(split, this).detach();
-
 }
 
 //Method to draw a frame
@@ -100,7 +99,7 @@ void GamePanel::bet() {
     Card* temporaryCard;
 
     //Drawing dealer's first card
-    temporaryCard = new Card(getCardId(), 430, 40, cardTextures);
+    temporaryCard = new Card(getCardId(), 441, 40, cardTextures);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -112,7 +111,7 @@ void GamePanel::bet() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing dealer's second card
-    temporaryCard = new Card(getCardId(), 510, 40, cardTextures);
+    temporaryCard = new Card(getCardId(), 517, 40, cardTextures);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));

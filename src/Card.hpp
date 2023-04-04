@@ -2,6 +2,7 @@
 #define CARD_H
 
 #include "raylib-cpp.hpp"
+#include <algorithm>
 
 class Card {
 

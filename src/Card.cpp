@@ -1,7 +1,7 @@
 #include "Card.hpp"
 
 Card::Card(int id, int x, int y, raylib::Texture2D** textures)
- : id(id), value(id), realLocation(1100, -100), location(x, y), textures(textures) {}
+ : id(id), value(std::min(ceil(((float) id + 1) / 4), 10.0f)), realLocation(1100, -100), location(x, y), textures(textures) {}
 
 //Method to animate card's movement
 void Card::update() {

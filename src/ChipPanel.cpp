@@ -1,9 +1,9 @@
 #include "ChipPanel.hpp"
 
 //Constructor
-ChipPanel::ChipPanel(int& balance, int& betAmount)
- : x(291), realY(-130), y(realY), balance(balance), betAmount(betAmount), tray("../resources/images/tray.png"),
-   chipDropSound("../resources/audio/chipDrop.wav") {
+ChipPanel::ChipPanel(int& balance, int& betAmount) : x(291), realY(-130), y(realY), balance(balance), 
+    betAmount(betAmount), tray("../resources/images/tray.png"),
+    chipDropSound("../resources/audio/chipDrop.wav"), errorSound("../resources/audio/error.wav") {
 
     loadChipTextures();
 }
@@ -44,6 +44,8 @@ void ChipPanel::update() {
         //return because player can't interact with panel if it's moving
         return;
     }
+
+    registerBets();
 }
 
 //Method to draw panel
@@ -74,6 +76,61 @@ void ChipPanel::draw() const {
         } else {
             chipTextures[i]->Draw(chipPosition, 0.0f, 3.0f); 
         }
+    }
+}
+
+//Method to check if user pressed any of the chips
+void ChipPanel::registerBets() {
+
+    //Getting mouse position
+    raylib::Vector2 mouse = GetMousePosition();
+
+    //Looping through chips
+    for (int i = 0; i < 5; i++) {
+
+        //Getting chip's position
+        raylib::Vector2 chipPosition(x + 33 + (i * 78), realY + 33);
+
+        //Checking if mouse is not on chip
+        if (!CheckCollisionPointRec(mouse, raylib::Rectangle(chipPosition.x, chipPosition.y, 63, 63))) {
+            continue;
+        }
+
+        // Checking if mouse is not released
+        if (!IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+            continue;
+        }
+
+        //Getting chip's value
+        int bet;
+
+        switch (i) {
+            case 0:
+                bet = 5;
+                break;
+            case 1:
+                bet = 10;
+                break;
+            case 2:
+                bet = 25;
+                break;
+            case 3:
+                bet = 50;
+                break;
+            case 4:
+                bet = 100;
+        }
+
+        //Checking if player can afford bet
+        if (betAmount + bet > balance) {
+            errorSound.Play();
+            return;
+        }
+
+        //Updating betAmount
+        betAmount += bet;
+        chipDropSound.Play();
+        return;
     }
 }
 

@@ -18,6 +18,7 @@ class ChipPanel {
 
     private:
         void loadChipTextures();
+        void registerBets();
 
         int& balance;                           //user's balance referenced from GamePanel that created this ChipPanel
         int& betAmount;                         //user's current bet amount referenced from GamePanel that created this ChipPanel
@@ -26,6 +27,7 @@ class ChipPanel {
         raylib::Texture2D* chipTextures[5];     //array of chip texture pointers
         raylib::Texture2D tray;                 //tray texture
         raylib::Sound chipDropSound;            //Sound used when selecting a chip
+        raylib::Sound errorSound;               //Sound used for invalid bet increases
         
         const int x;
 

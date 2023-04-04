@@ -2,7 +2,7 @@
 
 GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(1024, 445, 924, 445, "../resources/images/buttons/BET.png"),
     hitButton(924, 545, 924, 445, "../resources/images/buttons/HIT.png"), standButton(824, 545, 824, 445, "../resources/images/buttons/STAND.png"),
-    splitButton(1024, 390, 924, 390, "../resources/images/buttons/SPLIT.png"), font("../resources/misc/monobit.ttf", 256),
+    splitButton(1024, 390, 924, 390, "../resources/images/buttons/SPLIT.png"), font("../resources/misc/monobit.ttf", 256), betAmount(0),
     balancePanel("../resources/images/BalancePanel.png"), state(WAITING_FOR_BET), chipPanel(balance, betAmount), balance(1000),
     cardDrawSound("../resources/audio/cardDraw.wav"), chipsDropSound("../resources/audio/chipsDrop.wav"), cardSlideSound("../resources/audio/cardSlide.wav") {
 
@@ -78,6 +78,8 @@ void GamePanel::draw() {
     int width = font.MeasureText(balanceString, 45.0f, 5.0f).GetX();
     font.DrawText(balanceString, raylib::Vector2(958 - width / 2, -10), 45.0f, 5.0f);
 
+    font.DrawText(std::to_string(betAmount), raylib::Vector2(900, 100), 45.0f, 5.0f);
+
     DrawFPS(0, 0);
 }
 
@@ -90,7 +92,7 @@ void GamePanel::drawMenu() {
 void GamePanel::bet() {
     chipsDropSound.Play();
     //Updating balance
-    //balance -= betAmount;
+    balance -= betAmount;
 
     //Moving chip panel and bet button off screen
     chipPanel.hide();

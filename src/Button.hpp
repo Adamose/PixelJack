@@ -16,6 +16,7 @@ class Button {
         void hide();
         void show();
         bool isPressed() const;
+        bool isMoving() const;
 
     private:
         raylib::Texture2D texture;            //button's texture sheet

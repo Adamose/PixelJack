@@ -1,7 +1,8 @@
 #include "Card.hpp"
 
 Card::Card(int id, int x, int y, raylib::Texture2D** textures)
- : id(id), value(std::min(ceil(((float) id + 1) / 4), 10.0f)), realLocation(1100, -100), location(x, y), textures(textures) {}
+ : id(id), value(std::min(ceil(((float) id + 1) / 4), 10.0f)), realLocation(1100, -100), 
+   location(x, y), textures(textures), facedown(false) {}
 
 //Method to animate card's movement
 void Card::update() {
@@ -23,8 +24,12 @@ void Card::update() {
 //Method to draw card texture
 void Card::draw() const {
 
-    //Drawing texture with 0 rotation and 2 times scaling
-    textures[id]->Draw(realLocation, 0.0f, 2.0f);
+    //Check if card is face down
+    if (facedown) {
+        textures[52]->Draw(realLocation, 0.0f, 2.0f);
+    } else {
+        textures[id]->Draw(realLocation, 0.0f, 2.0f);
+    }
 }
 
 //Method to set card's new location to move to
@@ -40,4 +45,8 @@ bool Card::isMoving() const {
 
 int Card::getValue() const {
     return value;
+}
+
+void Card::setFacedown(bool boolean) {
+    facedown = boolean;
 }

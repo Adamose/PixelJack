@@ -106,3 +106,8 @@ void Button::hide() {
 void Button::show() {
     location = showLocation;
 }
+
+//Method to check if button is currently moving
+bool Button::isMoving() const {
+    return realLocation != location;
+}

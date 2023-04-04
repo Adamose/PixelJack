@@ -42,6 +42,9 @@ class GamePanel {
         Button hitButton;
         Button standButton;
         Button splitButton;
+        raylib::Sound cardDrawSound;
+        raylib::Sound cardSlideSound;
+        raylib::Sound chipsDropSound;
         raylib::Font font;
         raylib::Texture2D* cardTextures[53];    //array of pointers for card textures
         std::vector<Card*> cards;               //dynamic array of card pointers

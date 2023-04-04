@@ -7,6 +7,9 @@ int main() {
     //Creating window instance
     raylib::Window window(1024, 500);
     
+    //Creating audio device (constructor initializes it and destructor closes it)
+    raylib::AudioDevice audioDevice;
+    
     //Setting window's properties
     window.SetTargetFPS(30);
     window.SetIcon(raylib::Image("../resources/misc/PixelJack.png"));

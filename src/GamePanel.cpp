@@ -3,7 +3,8 @@
 GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(1024, 445, 924, 445, "../resources/images/buttons/BET.png"),
     hitButton(924, 545, 924, 445, "../resources/images/buttons/HIT.png"), standButton(824, 545, 824, 445, "../resources/images/buttons/STAND.png"),
     splitButton(1024, 390, 924, 390, "../resources/images/buttons/SPLIT.png"), font("../resources/misc/monobit.ttf", 256),
-    balancePanel("../resources/images/BalancePanel.png"), state(WAITING_FOR_BET), chipPanel(balance, betAmount), balance(1000) {
+    balancePanel("../resources/images/BalancePanel.png"), state(WAITING_FOR_BET), chipPanel(balance, betAmount), balance(1000),
+    cardDrawSound("../resources/audio/cardDraw.wav"), chipsDropSound("../resources/audio/chipsDrop.wav"), cardSlideSound("../resources/audio/cardSlide.wav") {
 
     chipPanel.show();
     betButton.show();
@@ -87,9 +88,9 @@ void GamePanel::drawMenu() {
 
 //Method called when the user pressed the bet button (runs on side thread)
 void GamePanel::bet() {
-
+    chipsDropSound.Play();
     //Updating balance
-    balance -= betAmount;
+    //balance -= betAmount;
 
     //Moving chip panel and bet button off screen
     chipPanel.hide();
@@ -102,27 +103,39 @@ void GamePanel::bet() {
     temporaryCard = new Card(getCardId(), 441, 40, cardTextures);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing player's first card
     temporaryCard = new Card(getCardId(), 490, 300, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing dealer's second card
     temporaryCard = new Card(getCardId(), 517, 40, cardTextures);
+    temporaryCard->setFacedown(true);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Drawing player's second card
     temporaryCard = new Card(getCardId(), 512, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     while (temporaryCard->isMoving()) {}
 
     //Check if player got a blackjack
+    if (playerHandOne[0]->getValue() + playerHandOne[1]->getValue() == 11) {
+        printf("blackjack");
+    }
 
     //Showing action buttons
     hitButton.show();
@@ -136,6 +149,19 @@ void GamePanel::bet() {
 
 //Method called when the user pressed the hit button
 void GamePanel::hit() {
+
+    for (Card* card: cards) {
+        card->setLocation(-141, -100);
+    }
+    cardSlideSound.Play();
+
+    dealerHand[1]->setFacedown(false);
+    standButton.hide();
+    hitButton.hide();
+    while (hitButton.isMoving()) {}
+
+    betButton.show();
+    chipPanel.show();
 
     //Draw another player card
 

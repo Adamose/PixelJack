@@ -100,6 +100,7 @@ void GamePanel::bet() {
     //Checking if bet is invalid
     if (betAmount == 0 || betAmount > balance) {
         errorSound.Play();
+        betButton.setActive(false);
         return;
     }
 
@@ -167,7 +168,19 @@ void GamePanel::bet() {
 void GamePanel::hit() {
     hitButton.setActive(true);
 
-    clearGame();
+    //Draw a card
+    Card* newCard = new Card(getCardId(), 490 + (playerHandOne.size() * 22), 300 - (playerHandOne.size() * 17), cardTextures);
+    cards.push_back(newCard);
+    playerHandOne.push_back(newCard);
+    cardDrawSound.PlayMulti();
+    cardSlideSound.PlayMulti();
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    //Check if player lost
+    if (getHandValue(playerHandOne) > 21) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        clearGame();
+    }
 
     hitButton.setActive(false);
 }

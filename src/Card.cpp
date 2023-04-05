@@ -12,8 +12,15 @@ void Card::update() {
         return;
     }
 
+    float speed = 0.15;
+
+    //Check if card is being discarded
+    if (location.x == -141) {
+        speed = 0.07;
+    }
+
     //Use linear interpolation to move card
-    realLocation = Vector2Lerp(realLocation, location, 0.15f);
+    realLocation = Vector2Lerp(realLocation, location, speed);
 
     //Checking if card reached it's location (check if rounded reallocation is same as location)
     if (raylib::Vector2(roundf(realLocation.x), roundf(realLocation.y)) == location) {

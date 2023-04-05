@@ -7,48 +7,9 @@ Button::Button(int hideX, int hideY, int showX, int showY, const std::string& te
 //Method to animate button's movement
 void Button::update() {
 
-    //Checking if button needs to move horizontally
-    if (realLocation.x != location.x) {
-
-        //Checking which direction to move
-        if (realLocation.x < location.x) {
-            realLocation.x += 5;
-
-            //Checking if moved too far
-            if (realLocation.x > location.x) {
-                realLocation.x = location.x;
-            }
-
-        } else {
-            realLocation.x -= 5;
-
-            //Checking if moved too far
-            if (realLocation.x < location.x) {
-                realLocation.x = location.x;
-            }
-        }
-    }
-
-    //Checking if button needs to move vertically
-    if (realLocation.y != location.y) {
-
-        //Checking which direction to move
-        if (realLocation.y < location.y) {
-            realLocation.y += 5;
-
-            //Checking if moved too far
-            if (realLocation.y > location.y) {
-                realLocation.y = location.y;
-            }
-
-        } else {
-            realLocation.y -= 5;
-
-            //Checking if moved too far
-            if (realLocation.y < location.y) {
-                realLocation.y = location.y;
-            }
-        }
+    //Checking if button needs to move
+    if (realLocation != location) {
+        realLocation = Vector2MoveTowards(realLocation, location, 5.0f);
     }
 }
 

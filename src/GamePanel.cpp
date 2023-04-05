@@ -2,9 +2,10 @@
 
 GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(1024, 445, 924, 445, "../resources/images/buttons/BET.png"),
     hitButton(924, 545, 924, 445, "../resources/images/buttons/HIT.png"), standButton(824, 545, 824, 445, "../resources/images/buttons/STAND.png"),
-    splitButton(1024, 390, 924, 390, "../resources/images/buttons/SPLIT.png"), font("../resources/misc/monobit.ttf", 256), betAmount(0),
-    balancePanel("../resources/images/BalancePanel.png"), state(WAITING_FOR_BET), chipPanel(balance, betAmount), balance(1000),
-    cardDrawSound("../resources/audio/cardDraw.wav"), chipsDropSound("../resources/audio/chipsDrop.wav"), cardSlideSound("../resources/audio/cardSlide.wav") {
+    splitButton(1024, 390, 924, 390, "../resources/images/buttons/SPLIT.png"), font("../resources/misc/monobit.ttf", 256), betAmount(0), balance(1000),
+    balancePanel("../resources/images/BalancePanel.png"), cardDrawSound("../resources/audio/cardDraw.wav"), chipPanel(balance, betAmount), 
+    chipsDropSound("../resources/audio/chipsDrop.wav"), cardSlideSound("../resources/audio/cardSlide.wav"), errorSound("../resources/audio/error.wav"), 
+    cardFlipSound("../resources/audio/cardFlip.wav") {
 
     chipPanel.show();
     betButton.show();
@@ -52,17 +53,21 @@ void GamePanel::draw() {
 
     //Updating game state
     update();
-    
-    if (state == IN_MENU) {
-        drawMenu();
-        return;
-    }
 
     background.Draw(0, 0);
 
     //Drawing cards
     for (Card* card: cards) {
         card->draw();
+    }
+
+    //Drawing hand values
+    if (!dealerHand.empty()) {
+        font.DrawText(std::to_string(getHandValue(dealerHand)), raylib::Vector2(490, 200), 35.0f, 1.0f);
+    }
+
+    if (!playerHandOne.empty()) {
+        font.DrawText(std::to_string(getHandValue(playerHandOne)), raylib::Vector2(500, 400), 35.0f, 1.0f);
     }
 
     //Drawing components
@@ -90,7 +95,13 @@ void GamePanel::drawMenu() {
 
 //Method called when the user pressed the bet button (runs on side thread)
 void GamePanel::bet() {
-    chipsDropSound.Play();
+    
+    //Checking if bet is invalid
+    if (betAmount == 0 || betAmount > balance) {
+        errorSound.Play();
+        return;
+    }
+
     //Updating balance
     balance -= betAmount;
 
@@ -105,16 +116,16 @@ void GamePanel::bet() {
     temporaryCard = new Card(getCardId(), 441, 40, cardTextures);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
-    cardDrawSound.Play();
-    cardSlideSound.Play();
+    cardDrawSound.PlayMulti();
+    cardSlideSound.PlayMulti();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing player's first card
     temporaryCard = new Card(getCardId(), 490, 300, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
-    cardDrawSound.Play();
-    cardSlideSound.Play();
+    cardDrawSound.PlayMulti();
+    cardSlideSound.PlayMulti();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing dealer's second card
@@ -122,16 +133,16 @@ void GamePanel::bet() {
     temporaryCard->setFacedown(true);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
-    cardDrawSound.Play();
-    cardSlideSound.Play();
+    cardDrawSound.PlayMulti();
+    cardSlideSound.PlayMulti();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Drawing player's second card
     temporaryCard = new Card(getCardId(), 512, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
-    cardDrawSound.Play();
-    cardSlideSound.Play();
+    cardDrawSound.PlayMulti();
+    cardSlideSound.PlayMulti();
     while (temporaryCard->isMoving()) {}
 
     //Check if player got a blackjack
@@ -151,35 +162,57 @@ void GamePanel::bet() {
 
 //Method called when the user pressed the hit button
 void GamePanel::hit() {
-
-    for (Card* card: cards) {
-        card->setLocation(-141, -100);
-    }
-    cardSlideSound.Play();
-
-    dealerHand[1]->setFacedown(false);
-    standButton.hide();
-    hitButton.hide();
-    while (hitButton.isMoving()) {}
-
-    betButton.show();
-    chipPanel.show();
-
-    //Draw another player card
-
-    //Check if player busted
-
-    //Check if player got 21
+    clearGame();
 }
 
 //Method called when the user pressed the stand button
 void GamePanel::stand() {
+
+    //Reveal dealer card
+    cardFlipSound.Play();
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    dealerHand[1]->setFacedown(false);
+
+    //Dealer hit until > 16
+
+    //Check if won
+
 
 }
 
 //Method called when the user pressed the split button
 void GamePanel::split() {
 
+}
+
+//Method to reset variables to start a new game
+void GamePanel::clearGame() {
+
+    //Moving cards off table
+    cardSlideSound.Play();
+
+    for (Card* card: cards) {
+        card->setLocation(-141, -100);
+    }
+    
+    //Hiding buttons
+    standButton.hide();
+    hitButton.hide();
+    splitButton.hide();
+    
+    //Wait for all elements to be off screen
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    //Showing chipPanel and betButton
+    chipPanel.show();
+    betButton.show();
+
+    //Resetting  variables
+    betAmount = 0;
+    dealerHand.clear();
+    playerHandOne.clear();
+    playerHandTwo.clear();
+    cards.clear();
 }
 
 //Method to load the 53 card textures into an array
@@ -203,4 +236,37 @@ int GamePanel::getCardId() const {
     static std::uniform_int_distribution<> dis(0, 51);
 
     return dis(gen);
+}
+
+//Method to get hand's value
+int GamePanel::getHandValue(std::vector<Card*> hand) const {
+
+    int value = 0;
+    int containsAce = false;
+
+    //Caculating value ignoring first occuring ace
+    for (Card* card: hand) {
+
+        //Checking if card is first occuring ace
+        if (!containsAce && card->getValue() == 1) {
+            containsAce = true;
+            continue;
+        }
+
+        value += card->getValue();
+    }
+
+    //Checking if we didn't ignore an ace
+    if (!containsAce) {
+        return value;
+    }
+
+    //Deciding wether to add 1 or 11 for the ace we ignored
+    if (value < 11) {
+        value += 11;
+    } else {
+        value++;
+    }
+
+    return value;
 }

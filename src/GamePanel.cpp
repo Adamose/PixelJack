@@ -65,15 +65,6 @@ void GamePanel::draw() {
         card->draw();
     }
 
-    //Drawing hand values
-    if (!dealerHand.empty()) {
-        font.DrawText(std::to_string(getHandValue(dealerHand)), raylib::Vector2(490, 200), 35.0f, 1.0f);
-    }
-
-    if (!playerHandOne.empty()) {
-        font.DrawText(std::to_string(getHandValue(playerHandOne)), raylib::Vector2(500, 400), 35.0f, 1.0f);
-    }
-
     //Drawing components
     betButton.draw();
     hitButton.draw();
@@ -81,6 +72,9 @@ void GamePanel::draw() {
     splitButton.draw();
     chipPanel.draw();
    
+    //Drawing hand values
+    drawHandValues();
+
     //Drawing balance
     balancePanel.Draw(884, 0);
     std::string balanceString = "$" + std::to_string(balance);
@@ -93,7 +87,7 @@ void GamePanel::draw() {
 }
 
 //Method to draw menu
-void GamePanel::drawMenu() {
+void GamePanel::drawMenu() const {
     background.Draw(0, 0);
 }
 
@@ -126,7 +120,7 @@ void GamePanel::bet() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing player's first card
-    temporaryCard = new Card(getCardId(), 490, 300, cardTextures);
+    temporaryCard = new Card(getCardId(), 479, 300, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     cardDrawSound.PlayMulti();
@@ -143,7 +137,7 @@ void GamePanel::bet() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Drawing player's second card
-    temporaryCard = new Card(getCardId(), 512, 283, cardTextures);
+    temporaryCard = new Card(getCardId(), 501, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     cardDrawSound.PlayMulti();
@@ -152,7 +146,7 @@ void GamePanel::bet() {
 
     //Check if player got a blackjack
     if (playerHandOne[0]->getValue() + playerHandOne[1]->getValue() == 11) {
-        printf("blackjack");
+        //printf("blackjack");
     }
 
     //Showing action buttons
@@ -161,7 +155,7 @@ void GamePanel::bet() {
 
     //Checking if split button has to be shown
     if (playerHandOne[0]->getValue() == playerHandOne[1]->getValue()) {
-        splitButton.show();
+        //splitButton.show();
     }
 
     threadAvailable = true;
@@ -171,7 +165,7 @@ void GamePanel::bet() {
 void GamePanel::hit() {
 
     //Draw a card
-    Card* newCard = new Card(getCardId(), 490 + (playerHandOne.size() * 22), 300 - (playerHandOne.size() * 17), cardTextures);
+    Card* newCard = new Card(getCardId(), 479 + (playerHandOne.size() * 22), 300 - (playerHandOne.size() * 17), cardTextures);
     cards.push_back(newCard);
     playerHandOne.push_back(newCard);
     cardDrawSound.PlayMulti();
@@ -211,7 +205,7 @@ void GamePanel::stand() {
         cardDrawSound.Play();
         centerDealerHand();
         cardSlideSound.Play();
-        std::this_thread::sleep_for(std::chrono::milliseconds(500)); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000)); 
     }
 
     //Check if won or tied
@@ -319,6 +313,32 @@ int GamePanel::getHandValue(const std::vector<Card*>& hand) const {
     return value;
 }
 
+//Method to get hand's values (soft vs hard ace)
+raylib::Vector2 GamePanel::getHandValues(const std::vector<Card*>& hand) const {
+
+    int value = 0;
+    int containsAce = false;
+
+    //Caculating value ignoring first occuring ace
+    for (Card* card: hand) {
+
+        //Checking if card is first occuring ace
+        if (!containsAce && card->getValue() == 1) {
+            containsAce = true;
+            continue;
+        }
+
+        value += card->getValue();
+    }
+
+    //Checking if we didn't ignore an ace
+    if (!containsAce) {
+        return raylib::Vector2(value, value);
+    }
+
+    return raylib::Vector2(value + 1, value + 11);
+}
+
 //Method to change dealer's cards' postitions to be centered
 void GamePanel::centerDealerHand() {
 
@@ -344,4 +364,50 @@ bool GamePanel::handHasAce(const std::vector<Card*>& hand)  const {
     }
 
     return false;
+}
+
+//Method to draw hands' values
+void GamePanel::drawHandValues() const {
+
+    std::string text;
+    int width;
+
+    if (!dealerHand.empty()) {
+        raylib::Vector2 values = getHandValues(dealerHand);
+        
+        if (values.x == values.y || values.y > 21) {
+            text = std::to_string( (int) values.y);
+        } else {
+            text = std::to_string( (int) values.x) + "/" + std::to_string( (int) values.y);
+        }
+
+        width = font.MeasureText(text, 35.0f, 1.0f).GetX();
+        font.DrawText(text, raylib::Vector2(512 - (width / 2), 200), 35.0f, 1.0f);
+    }
+
+    if (!playerHandOne.empty()) {
+        raylib::Vector2 values = getHandValues(playerHandOne);
+        
+        if (values.x == values.y || values.y > 21) {
+            text = std::to_string( (int) values.x);
+        } else {
+            text = std::to_string( (int) values.x) + "/" + std::to_string( (int) values.y);
+        }
+
+        width = font.MeasureText(text, 35.0f, 1.0f).GetX();
+        font.DrawText(text, raylib::Vector2(512 - (width / 2), 390), 35.0f, 1.0f);
+    }
+
+    if (!playerHandTwo.empty()) {
+        raylib::Vector2 values = getHandValues(playerHandTwo);
+        
+        if (values.x == values.y || values.y > 21) {
+            text = std::to_string( (int) values.x);
+        } else {
+            text = std::to_string( (int) values.x) + "/" + std::to_string( (int) values.y);
+        }
+
+        width = font.MeasureText(text, 35.0f, 1.0f).GetX();
+        font.DrawText(text, raylib::Vector2(512 - (width / 2), 390), 35.0f, 1.0f);
+    }
 }

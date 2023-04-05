@@ -23,10 +23,12 @@ class GamePanel {
         void loadCardTextures();
         int getCardId() const;
         int getHandValue(const std::vector<Card*>& hand) const;
+        raylib::Vector2 getHandValues(const std::vector<Card*>& hand) const;
         void centerDealerHand();
         bool handHasAce(const std::vector<Card*>& hand) const;
         void update();
-        void drawMenu();
+        void drawMenu() const;
+        void drawHandValues() const;
         void clearGame();
 
         //Button handlers

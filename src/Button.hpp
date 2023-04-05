@@ -17,8 +17,11 @@ class Button {
         void show();
         bool isPressed() const;
         bool isMoving() const;
+        bool isActive() const;
+        void setActive(bool boolean);
 
     private:
+        bool active;                          //Used to determine if button async handler is already running
         raylib::Texture2D texture;            //button's texture sheet
         raylib::Vector2 hideLocation;         //fixed off-screen location
         raylib::Vector2 showLocation;         //fixed on-screen location

@@ -42,10 +42,10 @@ void GamePanel::update() {
     chipPanel.update();
 
     //Checking for button presses (button handlers are async)
-    if (betButton.isPressed()) std::thread (bet, this).detach();
-    if (hitButton.isPressed()) std::thread (hit, this).detach();
-    if (standButton.isPressed()) std::thread(stand, this).detach();
-    if (splitButton.isPressed()) std::thread(split, this).detach();
+    if (betButton.isPressed() && !betButton.isActive()) std::thread (bet, this).detach();
+    if (hitButton.isPressed() && !hitButton.isActive()) std::thread (hit, this).detach();
+    if (standButton.isPressed() && !standButton.isActive()) std::thread(stand, this).detach();
+    if (splitButton.isPressed() && !splitButton.isActive()) std::thread(split, this).detach();
 }
 
 //Method to draw a frame
@@ -95,7 +95,8 @@ void GamePanel::drawMenu() {
 
 //Method called when the user pressed the bet button (runs on side thread)
 void GamePanel::bet() {
-    
+    betButton.setActive(true);
+
     //Checking if bet is invalid
     if (betAmount == 0 || betAmount > balance) {
         errorSound.Play();
@@ -158,31 +159,65 @@ void GamePanel::bet() {
     if (playerHandOne[0]->getValue() == playerHandOne[1]->getValue()) {
         splitButton.show();
     }
+
+    betButton.setActive(false);
 }
 
 //Method called when the user pressed the hit button
 void GamePanel::hit() {
+    hitButton.setActive(true);
+
     clearGame();
+
+    hitButton.setActive(false);
 }
 
 //Method called when the user pressed the stand button
 void GamePanel::stand() {
+    standButton.setActive(true);
 
     //Reveal dealer card
     cardFlipSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
     dealerHand[1]->setFacedown(false);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    //Dealer hit until > 16
+    //Dealer hits until hand value > 16
+    while (true) {
 
-    //Check if won
+        //Checking if dealer doesn't need to draw anymore
+        if (getHandValue(dealerHand) > 17 || (getHandValue(dealerHand) == 17 && !handHasAce(dealerHand))) {
+            break;
+        }
 
+        //Draw a card
+        Card* newCard = new Card(getCardId(), 1100, -100, cardTextures);
+        cards.push_back(newCard);
+        dealerHand.push_back(newCard);
+        cardDrawSound.Play();
+        centerDealerHand();
+        cardSlideSound.Play();
+        std::this_thread::sleep_for(std::chrono::milliseconds(500)); 
+    }
 
+    //Check if won or tied
+    if (getHandValue(dealerHand) > 21 || getHandValue(playerHandOne) > getHandValue(dealerHand)) {
+        balance += betAmount * 2;
+    } else if (getHandValue(playerHandOne) == getHandValue(dealerHand)) {
+        balance += betAmount;
+    }
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    clearGame();
+
+    standButton.setActive(false);
 }
 
 //Method called when the user pressed the split button
 void GamePanel::split() {
+    splitButton.setActive(true);
 
+    splitButton.setActive(false);
 }
 
 //Method to reset variables to start a new game
@@ -239,7 +274,7 @@ int GamePanel::getCardId() const {
 }
 
 //Method to get hand's value
-int GamePanel::getHandValue(std::vector<Card*> hand) const {
+int GamePanel::getHandValue(const std::vector<Card*>& hand) const {
 
     int value = 0;
     int containsAce = false;
@@ -269,4 +304,31 @@ int GamePanel::getHandValue(std::vector<Card*> hand) const {
     }
 
     return value;
+}
+
+//Method to change dealer's cards' postitions to be centered
+void GamePanel::centerDealerHand() {
+
+    //Finding width of dealer's hand
+    int width = (dealerHand.size() * 76) - 10;
+
+    //Finding position of left-most card
+    int startingX = 512 - (width / 2);
+
+    //Setting cards' new locations
+    for (Card* card: dealerHand) {
+        card->setLocation(startingX, 40);
+        startingX += 76;
+    }
+}
+
+//Method to check wether a hand has atleast one ace
+bool GamePanel::handHasAce(const std::vector<Card*>& hand)  const {
+    for (Card* card: hand) {
+        if (card->getValue() == 1) {
+            return true;
+        }
+    }
+
+    return false;
 }

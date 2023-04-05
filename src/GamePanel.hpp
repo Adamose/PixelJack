@@ -22,7 +22,9 @@ class GamePanel {
     private:
         void loadCardTextures();
         int getCardId() const;
-        int getHandValue(std::vector<Card*> hand) const;
+        int getHandValue(const std::vector<Card*>& hand) const;
+        void centerDealerHand();
+        bool handHasAce(const std::vector<Card*>& hand) const;
         void update();
         void drawMenu();
         void clearGame();

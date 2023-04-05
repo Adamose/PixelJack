@@ -72,3 +72,11 @@ void Button::show() {
 bool Button::isMoving() const {
     return realLocation != location;
 }
+
+bool Button::isActive() const {
+    return active;
+}
+
+void Button::setActive(bool boolean) {
+    active = boolean;
+}

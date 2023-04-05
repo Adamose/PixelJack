@@ -5,7 +5,7 @@ GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(
     splitButton(1024, 390, 924, 390, "../resources/images/buttons/SPLIT.png"), font("../resources/misc/monobit.ttf", 256), betAmount(0), balance(1000),
     balancePanel("../resources/images/BalancePanel.png"), cardDrawSound("../resources/audio/cardDraw.wav"), chipPanel(balance, betAmount), 
     chipsDropSound("../resources/audio/chipsDrop.wav"), cardSlideSound("../resources/audio/cardSlide.wav"), errorSound("../resources/audio/error.wav"), 
-    cardFlipSound("../resources/audio/cardFlip.wav") {
+    cardFlipSound("../resources/audio/cardFlip.wav"), threadAvailable(true) {
 
     chipPanel.show();
     betButton.show();
@@ -41,11 +41,15 @@ void GamePanel::update() {
     splitButton.update();
     chipPanel.update();
 
-    //Checking for button presses (button handlers are async)
-    if (betButton.isPressed() && !betButton.isActive()) std::thread (bet, this).detach();
-    if (hitButton.isPressed() && !hitButton.isActive()) std::thread (hit, this).detach();
-    if (standButton.isPressed() && !standButton.isActive()) std::thread(stand, this).detach();
-    if (splitButton.isPressed() && !splitButton.isActive()) std::thread(split, this).detach();
+    //Checking if we can handle buttons presses (handler thread avaible)
+    if (threadAvailable) {
+
+        //Checking for button presses (button handlers are async)
+        if (betButton.isPressed()) { threadAvailable = false; std::thread (bet, this).detach(); return; }
+        if (hitButton.isPressed()) { threadAvailable = false; std::thread (hit, this).detach(); return; }
+        if (standButton.isPressed()) { threadAvailable = false; std::thread(stand, this).detach(); return; }
+        if (splitButton.isPressed()) { threadAvailable = false; std::thread(split, this).detach(); return; }
+    }
 }
 
 //Method to draw a frame
@@ -95,12 +99,11 @@ void GamePanel::drawMenu() {
 
 //Method called when the user pressed the bet button (runs on side thread)
 void GamePanel::bet() {
-    betButton.setActive(true);
 
     //Checking if bet is invalid
     if (betAmount == 0 || betAmount > balance) {
         errorSound.Play();
-        betButton.setActive(false);
+        threadAvailable = true;
         return;
     }
 
@@ -161,12 +164,11 @@ void GamePanel::bet() {
         splitButton.show();
     }
 
-    betButton.setActive(false);
+    threadAvailable = true;
 }
 
 //Method called when the user pressed the hit button
 void GamePanel::hit() {
-    hitButton.setActive(true);
 
     //Draw a card
     Card* newCard = new Card(getCardId(), 490 + (playerHandOne.size() * 22), 300 - (playerHandOne.size() * 17), cardTextures);
@@ -182,12 +184,11 @@ void GamePanel::hit() {
         clearGame();
     }
 
-    hitButton.setActive(false);
+    threadAvailable = true;
 }
 
 //Method called when the user pressed the stand button
 void GamePanel::stand() {
-    standButton.setActive(true);
 
     //Reveal dealer card
     cardFlipSound.Play();
@@ -223,14 +224,13 @@ void GamePanel::stand() {
     std::this_thread::sleep_for(std::chrono::milliseconds(1500));
     clearGame();
 
-    standButton.setActive(false);
+    threadAvailable = true;
 }
 
 //Method called when the user pressed the split button
 void GamePanel::split() {
-    splitButton.setActive(true);
 
-    splitButton.setActive(false);
+    threadAvailable = true;
 }
 
 //Method to reset variables to start a new game

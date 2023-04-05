@@ -37,6 +37,7 @@ class GamePanel {
 
         int balance;
         int betAmount;
+        bool threadAvailable;                   //boolean used to determine if we currently have a handler thread running
         Button betButton;
         Button hitButton;
         Button standButton;

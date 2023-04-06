@@ -57,3 +57,7 @@ int Card::getValue() const {
 void Card::setFacedown(bool boolean) {
     facedown = boolean;
 }
+
+bool Card::getFacedown() const {
+    return facedown;
+}

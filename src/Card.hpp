@@ -15,6 +15,7 @@ class Card {
         bool isMoving() const;
         int getValue() const;
         void setFacedown(bool boolean);
+        bool getFacedown() const;
 
     private:
         const int id;                           //id used to pick the card texture to draw from 52 possible cards (id 0 is the back of a card)

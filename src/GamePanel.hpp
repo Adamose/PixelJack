@@ -28,6 +28,7 @@ class GamePanel {
         bool handHasAce(const std::vector<Card*>& hand) const;
         void update();
         void drawMenu() const;
+        void drawBetBalance() const;
         void drawHandValues() const;
         void clearGame();
 
@@ -39,7 +40,9 @@ class GamePanel {
 
         int balance;
         int betAmount;
+        bool inGame;
         bool threadAvailable;                   //boolean used to determine if we currently have a handler thread running
+        bool drawHands;                         //boolean used to determine wether to draw hands' values
         Button betButton;
         Button hitButton;
         Button standButton;
@@ -58,6 +61,7 @@ class GamePanel {
         ChipPanel chipPanel;                    //chipPanel used to get user's bet
         raylib::Texture2D const background;     //texture to draw as background
         raylib::Texture2D const balancePanel;   //texture to draw behind balance
+        raylib::Texture2D const betPanel;       //texture to draw behind betAmount
     
 };
 

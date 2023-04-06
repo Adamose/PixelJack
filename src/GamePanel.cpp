@@ -3,9 +3,9 @@
 GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(1024, 445, 924, 445, "../resources/images/buttons/BET.png"),
     hitButton(924, 545, 924, 445, "../resources/images/buttons/HIT.png"), standButton(824, 545, 824, 445, "../resources/images/buttons/STAND.png"),
     splitButton(1024, 390, 924, 390, "../resources/images/buttons/SPLIT.png"), font("../resources/misc/monobit.ttf", 256), betAmount(0), balance(1000),
-    balancePanel("../resources/images/BalancePanel.png"), cardDrawSound("../resources/audio/cardDraw.wav"), chipPanel(balance, betAmount), 
+    balancePanel("../resources/images/BalancePanel.png"), cardDrawSound("../resources/audio/cardDraw.wav"), chipPanel(balance, betAmount), inGame(false), 
     chipsDropSound("../resources/audio/chipsDrop.wav"), cardSlideSound("../resources/audio/cardSlide.wav"), errorSound("../resources/audio/error.wav"), 
-    cardFlipSound("../resources/audio/cardFlip.wav"), threadAvailable(true) {
+    cardFlipSound("../resources/audio/cardFlip.wav"), betPanel("../resources/images/BetPanel.png"), threadAvailable(true), drawHands(false) {
 
     chipPanel.show();
     betButton.show();
@@ -50,6 +50,17 @@ void GamePanel::update() {
         if (standButton.isPressed()) { threadAvailable = false; std::thread(stand, this).detach(); return; }
         if (splitButton.isPressed()) { threadAvailable = false; std::thread(split, this).detach(); return; }
     }
+
+    //Checking if player pressed betPanel
+    if (!inGame) {
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), raylib::Rectangle(0, 0, 154, 36))) {
+            if (betAmount == 0) {
+                errorSound.Play();
+            } else {
+                betAmount = 0;
+            }
+        }
+    }
 }
 
 //Method to draw a frame
@@ -73,17 +84,10 @@ void GamePanel::draw() {
     chipPanel.draw();
    
     //Drawing hand values
-    drawHandValues();
+    if (drawHands) drawHandValues();
 
-    //Drawing balance
-    balancePanel.Draw(884, 0);
-    std::string balanceString = "$" + std::to_string(balance);
-    int width = font.MeasureText(balanceString, 45.0f, 5.0f).GetX();
-    font.DrawText(balanceString, raylib::Vector2(958 - width / 2, -10), 45.0f, 5.0f);
-
-    font.DrawText(std::to_string(betAmount), raylib::Vector2(900, 100), 45.0f, 5.0f);
-
-    DrawFPS(0, 0);
+    //Drawing balance and betAmount
+    drawBetBalance();
 }
 
 //Method to draw menu
@@ -102,6 +106,7 @@ void GamePanel::bet() {
     }
 
     //Updating balance
+    inGame = true;
     balance -= betAmount;
 
     //Moving chip panel and bet button off screen
@@ -126,6 +131,7 @@ void GamePanel::bet() {
     cardDrawSound.PlayMulti();
     cardSlideSound.PlayMulti();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    drawHands = true;
     
     //Drawing dealer's second card
     temporaryCard = new Card(getCardId(), 517, 40, cardTextures);
@@ -145,8 +151,23 @@ void GamePanel::bet() {
     while (temporaryCard->isMoving()) {}
 
     //Check if player got a blackjack
-    if (playerHandOne[0]->getValue() + playerHandOne[1]->getValue() == 11) {
-        //printf("blackjack");
+    if (getHandValue(playerHandOne) == 21) {
+        
+        //Reveal dealer card
+        cardFlipSound.Play();
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        dealerHand[1]->setFacedown(false);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        
+        //Updating balance 3:2 betAmount
+        balance += (betAmount * 3) / 2;
+        chipsDropSound.Play();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        clearGame();
+
+        threadAvailable = true;
+        return;
     }
 
     //Showing action buttons
@@ -174,7 +195,7 @@ void GamePanel::hit() {
 
     //Check if player lost
     if (getHandValue(playerHandOne) > 21) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
         clearGame();
     }
 
@@ -194,7 +215,7 @@ void GamePanel::stand() {
     while (true) {
 
         //Checking if dealer doesn't need to draw anymore
-        if (getHandValue(dealerHand) > 17 || (getHandValue(dealerHand) == 17 && !handHasAce(dealerHand))) {
+        if (getHandValue(dealerHand) > 17 || !(getHandValues(dealerHand) == raylib::Vector2(7, 17))) {
             break;
         }
 
@@ -211,11 +232,12 @@ void GamePanel::stand() {
     //Check if won or tied
     if (getHandValue(dealerHand) > 21 || getHandValue(playerHandOne) > getHandValue(dealerHand)) {
         balance += betAmount * 2;
+        chipsDropSound.Play();
     } else if (getHandValue(playerHandOne) == getHandValue(dealerHand)) {
         balance += betAmount;
     }
     
-    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
     clearGame();
 
     threadAvailable = true;
@@ -232,6 +254,7 @@ void GamePanel::clearGame() {
 
     //Moving cards off table
     cardSlideSound.Play();
+    drawHands = false;
 
     for (Card* card: cards) {
         card->setLocation(-141, -100);
@@ -249,12 +272,13 @@ void GamePanel::clearGame() {
     chipPanel.show();
     betButton.show();
 
-    //Resetting  variables
-    betAmount = 0;
+    //Emptying arrays
     dealerHand.clear();
     playerHandOne.clear();
     playerHandTwo.clear();
     cards.clear();
+
+    inGame = false;
 }
 
 //Method to load the 53 card textures into an array
@@ -336,6 +360,11 @@ raylib::Vector2 GamePanel::getHandValues(const std::vector<Card*>& hand) const {
         return raylib::Vector2(value, value);
     }
 
+    //Checking for blackjack
+    if (value == 10) {
+        return raylib::Vector2(21, 21);
+    }
+
     return raylib::Vector2(value + 1, value + 11);
 }
 
@@ -375,39 +404,80 @@ void GamePanel::drawHandValues() const {
     if (!dealerHand.empty()) {
         raylib::Vector2 values = getHandValues(dealerHand);
         
-        if (values.x == values.y || values.y > 21) {
-            text = std::to_string( (int) values.y);
-        } else {
-            text = std::to_string( (int) values.x) + "/" + std::to_string( (int) values.y);
-        }
+        //Checking if dealer is hiding second card
+        if (dealerHand.size() == 1 || dealerHand[1]->getFacedown()) {
 
+            //Checking if first card is an ace
+            if (dealerHand[0]->getValue() == 1) {
+                text = "1/11";
+            } else {
+                text = std::to_string(dealerHand[0]->getValue());
+            }
+
+        } else {
+
+            //Checking if we need to display soft and hard values
+            if (values.x == values.y || values.y > 21) {
+                text = std::to_string( (int) values.x);
+            } else {
+                text = std::to_string( (int) values.x) + "/" + std::to_string( (int) values.y);
+            }
+        }
+        
+        //Getting width to center text
         width = font.MeasureText(text, 35.0f, 1.0f).GetX();
-        font.DrawText(text, raylib::Vector2(512 - (width / 2), 200), 35.0f, 1.0f);
+        font.DrawText(text, raylib::Vector2(512 - (width / 2), 133), 35.0f, 1.0f);
     }
 
     if (!playerHandOne.empty()) {
         raylib::Vector2 values = getHandValues(playerHandOne);
         
+        //Checking if we need to display soft and hard values
         if (values.x == values.y || values.y > 21) {
             text = std::to_string( (int) values.x);
         } else {
             text = std::to_string( (int) values.x) + "/" + std::to_string( (int) values.y);
         }
 
+        //Getting width to center text
         width = font.MeasureText(text, 35.0f, 1.0f).GetX();
-        font.DrawText(text, raylib::Vector2(512 - (width / 2), 390), 35.0f, 1.0f);
+        font.DrawText(text, raylib::Vector2(512 - (width / 2), 393), 35.0f, 1.0f);
     }
 
     if (!playerHandTwo.empty()) {
         raylib::Vector2 values = getHandValues(playerHandTwo);
         
+        //Checking if we need to display soft and hard values
         if (values.x == values.y || values.y > 21) {
             text = std::to_string( (int) values.x);
         } else {
             text = std::to_string( (int) values.x) + "/" + std::to_string( (int) values.y);
         }
 
+        //Getting width to center text
         width = font.MeasureText(text, 35.0f, 1.0f).GetX();
-        font.DrawText(text, raylib::Vector2(512 - (width / 2), 390), 35.0f, 1.0f);
+        font.DrawText(text, raylib::Vector2(512 - (width / 2), 393), 35.0f, 1.0f);
     }
+}
+
+//Method to draw betAmount and balance
+void GamePanel::drawBetBalance() const {
+    std::string text;
+    int width;
+
+    //Drawing balance
+    balancePanel.Draw(884, 0);
+    text = "$" + std::to_string(balance);
+    width = font.MeasureText(text, 45.0f, 5.0f).GetX();
+    font.DrawText(text, raylib::Vector2(958 - width / 2, -10), 45.0f, 5.0f);
+
+    //Checking which betPanel texture to draw
+    raylib::Rectangle betPanelRectangle(0, 0, 154, 36);
+    int y = CheckCollisionPointRec(GetMousePosition(), betPanelRectangle) ? 37 : 0;
+
+    //Drawing bet
+    betPanel.Draw(raylib::Rectangle(0, y, 154, 36), betPanelRectangle, raylib::Vector2(0, 0), 0.0f);
+    text = std::to_string(betAmount);
+    width = font.MeasureText(text, 45.0f, 5.0f).GetX();
+    font.DrawText(text, raylib::Vector2(54 - width / 2, -10), 45.0f, 5.0f);
 }

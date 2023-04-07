@@ -191,12 +191,17 @@ void GamePanel::hit() {
     playerHandOne.push_back(newCard);
     cardDrawSound.PlayMulti();
     cardSlideSound.PlayMulti();
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(750));
 
     //Check if player lost
     if (getHandValue(playerHandOne) > 21) {
         while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
         clearGame();
+    }
+
+    //Check if player has 21
+    if (getHandValue(playerHandOne) == 21) {
+        stand();
     }
 
     threadAvailable = true;
@@ -215,7 +220,7 @@ void GamePanel::stand() {
     while (true) {
 
         //Checking if dealer doesn't need to draw anymore
-        if (getHandValue(dealerHand) > 17 || !(getHandValues(dealerHand) == raylib::Vector2(7, 17))) {
+        if (getHandValue(dealerHand) > 16 && !(getHandValues(dealerHand) == raylib::Vector2(7, 17))) {
             break;
         }
 
@@ -252,10 +257,10 @@ void GamePanel::split() {
 //Method to reset variables to start a new game
 void GamePanel::clearGame() {
 
-    //Moving cards off table
     cardSlideSound.Play();
     drawHands = false;
 
+    //Moving cards off the table
     for (Card* card: cards) {
         card->setLocation(-141, -100);
     }
@@ -267,6 +272,11 @@ void GamePanel::clearGame() {
     
     //Wait for all elements to be off screen
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    //Freeing memory allocated to cards
+    for (Card* card: cards) {
+        delete card;
+    }
 
     //Showing chipPanel and betButton
     chipPanel.show();

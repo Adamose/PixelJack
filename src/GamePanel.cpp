@@ -239,7 +239,26 @@ void GamePanel::stand() {
 
     //Checking if player is standing first hand after split
     if (playerSplit && handOneActive) {
+
         handOneActive = false;
+
+        //Checking if right split hand has blackjack
+        if (getHandValue(playerHandTwo) == 21) {
+
+            //Reveal dealer card
+            cardFlipSound.Play();
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            dealerHand[1]->setFacedown(false);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            
+            //Updating balance 3:2 betAmount
+            balance += (betAmount * 3) / 2;
+            chipsDropSound.PlayMulti();
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+            clearGame();
+        }
+
         threadAvailable = true;
         return;
     }
@@ -322,6 +341,13 @@ void GamePanel::split() {
     cardDrawSound.PlayMulti();
     cardSlideSound.PlayMulti();
     std::this_thread::sleep_for(std::chrono::milliseconds(750));
+
+    //Checking if left split hand has blackjack
+    if (getHandValue(playerHandOne) == 21) {
+        balance += (betAmount * 3) / 2;
+        chipsDropSound.PlayMulti();
+        stand();
+    }
 
     threadAvailable = true;
 }

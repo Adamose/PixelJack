@@ -237,6 +237,13 @@ void GamePanel::hit() {
 //Method called when the user pressed the stand button
 void GamePanel::stand() {
 
+    //Checking if player is standing first hand after split
+    if (playerSplit && handOneActive) {
+        handOneActive = false;
+        threadAvailable = true;
+        return;
+    }
+
     //Reveal dealer card
     cardFlipSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
@@ -261,11 +268,19 @@ void GamePanel::stand() {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000)); 
     }
 
-    //Check if won or tied
+    //Check if handOne won or tied
     if (getHandValue(dealerHand) > 21 || getHandValue(playerHandOne) > getHandValue(dealerHand)) {
         balance += betAmount * 2;
-        chipsDropSound.Play();
+        chipsDropSound.PlayMulti();
     } else if (getHandValue(playerHandOne) == getHandValue(dealerHand)) {
+        balance += betAmount;
+    }
+
+    //Check if handTwo won or tied
+    if (getHandValue(dealerHand) > 21 || getHandValue(playerHandTwo) > getHandValue(dealerHand)) {
+        balance += betAmount * 2;
+        chipsDropSound.PlayMulti();
+    } else if (getHandValue(playerHandTwo) == getHandValue(dealerHand)) {
         balance += betAmount;
     }
     
@@ -279,6 +294,7 @@ void GamePanel::stand() {
 void GamePanel::split() {
 
     playerSplit = true;
+    balance -= betAmount;
 
     //Moving second card to second hand
     playerHandTwo.push_back(playerHandOne[1]);

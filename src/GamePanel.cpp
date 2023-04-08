@@ -5,7 +5,8 @@ GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(
     splitButton(1024, 390, 924, 390, "../resources/images/buttons/SPLIT.png"), font("../resources/misc/monobit.ttf", 256), betAmount(0), balance(1000),
     balancePanel("../resources/images/BalancePanel.png"), cardDrawSound("../resources/audio/cardDraw.wav"), chipPanel(balance, betAmount), inGame(false), 
     chipsDropSound("../resources/audio/chipsDrop.wav"), cardSlideSound("../resources/audio/cardSlide.wav"), errorSound("../resources/audio/error.wav"), 
-    cardFlipSound("../resources/audio/cardFlip.wav"), betPanel("../resources/images/BetPanel.png"), threadAvailable(true), drawHands(false) {
+    cardFlipSound("../resources/audio/cardFlip.wav"), betPanel("../resources/images/BetPanel.png"), threadAvailable(true), drawHands(false), 
+    playerSplit(false), handOneActive(true) {
 
     chipPanel.show();
     betButton.show();
@@ -173,6 +174,7 @@ void GamePanel::bet() {
     //Showing action buttons
     hitButton.show();
     standButton.show();
+    splitButton.show();
 
     //Checking if split button has to be shown
     if (playerHandOne[0]->getValue() == playerHandOne[1]->getValue()) {
@@ -185,23 +187,48 @@ void GamePanel::bet() {
 //Method called when the user pressed the hit button
 void GamePanel::hit() {
 
+    std::vector<Card*>* hand = &playerHandOne;
+    int x = 479;
+
+    //Checking if we're hitting a split hand
+    if (playerSplit) {
+        if (handOneActive) {
+            x = 562;
+        } else {
+            x = 396;
+            hand = &playerHandTwo;
+        }
+    }
+
     //Draw a card
-    Card* newCard = new Card(getCardId(), 479 + (playerHandOne.size() * 22), 300 - (playerHandOne.size() * 17), cardTextures);
+    Card* newCard = new Card(getCardId(), x + ((*hand).size() * 22), 300 - ((*hand).size() * 17), cardTextures);
     cards.push_back(newCard);
-    playerHandOne.push_back(newCard);
+    (*hand).push_back(newCard);
     cardDrawSound.PlayMulti();
     cardSlideSound.PlayMulti();
     std::this_thread::sleep_for(std::chrono::milliseconds(750));
 
     //Check if player lost
-    if (getHandValue(playerHandOne) > 21) {
-        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
-        clearGame();
+    if (getHandValue((*hand)) > 21) {
+
+        //Checking if active split hand should now be hand two
+        if (playerSplit && hand == &playerHandOne) {
+            handOneActive = false;
+        } else {
+            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+            clearGame();
+        }
     }
 
     //Check if player has 21
-    if (getHandValue(playerHandOne) == 21) {
-        stand();
+    if (getHandValue((*hand)) == 21) {
+
+        //Checking if active split hand should now be hand two
+        if (playerSplit && hand == &playerHandOne) {
+            handOneActive = false;
+        } else {
+            stand();
+        }
     }
 
     threadAvailable = true;
@@ -251,6 +278,35 @@ void GamePanel::stand() {
 //Method called when the user pressed the split button
 void GamePanel::split() {
 
+    playerSplit = true;
+
+    //Moving second card to second hand
+    playerHandTwo.push_back(playerHandOne[1]);
+    playerHandOne.pop_back();
+
+    //Adjusting hands' positions
+    playerHandOne[0]->setLocation(562, 300);
+    playerHandTwo[0]->setLocation(396, 300);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    Card* temporaryCard;
+
+    //Drawing first hand's second card
+    temporaryCard = new Card(getCardId(), 584, 283, cardTextures);
+    cards.push_back(temporaryCard);
+    playerHandOne.push_back(temporaryCard);
+    cardDrawSound.PlayMulti();
+    cardSlideSound.PlayMulti();
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    //Drawing second hand's second card
+    temporaryCard = new Card(getCardId(), 418, 283, cardTextures);
+    cards.push_back(temporaryCard);
+    playerHandTwo.push_back(temporaryCard);
+    cardDrawSound.PlayMulti();
+    cardSlideSound.PlayMulti();
+    std::this_thread::sleep_for(std::chrono::milliseconds(750));
+
     threadAvailable = true;
 }
 
@@ -288,6 +344,8 @@ void GamePanel::clearGame() {
     playerHandTwo.clear();
     cards.clear();
 
+    playerSplit = false;
+    handOneActive = true;
     inGame = false;
 }
 
@@ -436,7 +494,7 @@ void GamePanel::drawHandValues() const {
         
         //Getting width to center text
         width = font.MeasureText(text, 35.0f, 1.0f).GetX();
-        font.DrawText(text, raylib::Vector2(512 - (width / 2), 133), 35.0f, 1.0f);
+        font.DrawText(text, raylib::Vector2(514 - (width / 2), 133), 35.0f, 1.0f);
     }
 
     if (!playerHandOne.empty()) {
@@ -450,8 +508,10 @@ void GamePanel::drawHandValues() const {
         }
 
         //Getting width to center text
+        int x = (playerSplit) ? 597 : 514;
+        raylib::Color color = (playerSplit && handOneActive) ? GOLD : WHITE;
         width = font.MeasureText(text, 35.0f, 1.0f).GetX();
-        font.DrawText(text, raylib::Vector2(512 - (width / 2), 393), 35.0f, 1.0f);
+        font.DrawText(text, raylib::Vector2(x - (width / 2), 393), 35.0f, 1.0f, color);
     }
 
     if (!playerHandTwo.empty()) {
@@ -465,8 +525,9 @@ void GamePanel::drawHandValues() const {
         }
 
         //Getting width to center text
+        raylib::Color color = (!handOneActive) ? GOLD : WHITE;
         width = font.MeasureText(text, 35.0f, 1.0f).GetX();
-        font.DrawText(text, raylib::Vector2(512 - (width / 2), 393), 35.0f, 1.0f);
+        font.DrawText(text, raylib::Vector2(431 - (width / 2), 393), 35.0f, 1.0f, color);
     }
 }
 

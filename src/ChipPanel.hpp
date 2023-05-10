@@ -1,7 +1,7 @@
 #ifndef CHIPPANEL_H
 #define CHIPPANEL_H
 
-#include "raylib-cpp.hpp"
+#include "../include/raylib-cpp.hpp"
 
 //Class for panel containing chip buttons for user to select bet amount
 class ChipPanel {

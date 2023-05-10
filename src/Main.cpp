@@ -1,4 +1,4 @@
-#include "raylib-cpp.hpp"
+#include "../include/raylib-cpp.hpp"
 #include "GamePanel.hpp"
 
 //Entry point of program

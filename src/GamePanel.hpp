@@ -6,7 +6,7 @@
 #include <thread>
 #include <chrono>
 #include <random>
-#include "raylib-cpp.hpp"
+#include "../include/raylib-cpp.hpp"
 #include "Card.hpp"
 #include "ChipPanel.hpp"
 #include "Button.hpp"

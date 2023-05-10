@@ -1,7 +1,7 @@
 #ifndef CARD_H
 #define CARD_H
 
-#include "raylib-cpp.hpp"
+#include "../include/raylib-cpp.hpp"
 #include <algorithm>
 
 class Card {

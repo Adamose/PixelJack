@@ -160,6 +160,8 @@ void GamePanel::bet() {
         dealerHand[1]->setFacedown(false);
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         
+        //Check if dealer also got blackjack
+
         //Updating balance 3:2 betAmount
         balance += (betAmount * 3) / 2;
         chipsDropSound.Play();
@@ -174,11 +176,10 @@ void GamePanel::bet() {
     //Showing action buttons
     hitButton.show();
     standButton.show();
-    splitButton.show();
 
     //Checking if split button has to be shown
-    if (playerHandOne[0]->getValue() == playerHandOne[1]->getValue()) {
-        //splitButton.show();
+    if (playerHandOne[0]->getValue() == playerHandOne[1]->getValue() && balance >= betAmount) {
+        splitButton.show();
     }
 
     threadAvailable = true;
@@ -186,6 +187,7 @@ void GamePanel::bet() {
 
 //Method called when the user pressed the hit button
 void GamePanel::hit() {
+    splitButton.hide();
 
     std::vector<Card*>* hand = &playerHandOne;
     int x = 479;
@@ -236,6 +238,7 @@ void GamePanel::hit() {
 
 //Method called when the user pressed the stand button
 void GamePanel::stand() {
+    splitButton.hide();
 
     //Checking if player is standing first hand after split
     if (playerSplit && handOneActive) {
@@ -533,7 +536,7 @@ void GamePanel::drawHandValues() const {
                 text = std::to_string( (int) values.x) + "/" + std::to_string( (int) values.y);
             }
         }
-        
+
         //Getting width to center text
         width = font.MeasureText(text, 35.0f, 1.0f).GetX();
         font.DrawText(text, raylib::Vector2(514 - (width / 2), 133), 35.0f, 1.0f);

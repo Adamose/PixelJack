@@ -46,10 +46,10 @@ void GamePanel::update() {
     if (threadAvailable) {
 
         //Checking for button presses (button handlers are async)
-        if (betButton.isPressed()) { threadAvailable = false; std::thread (bet, this).detach(); return; }
-        if (hitButton.isPressed()) { threadAvailable = false; std::thread (hit, this).detach(); return; }
-        if (standButton.isPressed()) { threadAvailable = false; std::thread(stand, this).detach(); return; }
-        if (splitButton.isPressed()) { threadAvailable = false; std::thread(split, this).detach(); return; }
+        if (betButton.isPressed()) { threadAvailable = false; std::thread ([this] { bet(); }).detach(); return; }
+        if (hitButton.isPressed()) { threadAvailable = false; std::thread ([this] { hit(); }).detach(); return; }
+        if (standButton.isPressed()) { threadAvailable = false; std::thread([this] { stand(); }).detach(); return; }
+        if (splitButton.isPressed()) { threadAvailable = false; std::thread([this] { split(); }).detach(); return; }
     }
 
     //Checking if player pressed betPanel

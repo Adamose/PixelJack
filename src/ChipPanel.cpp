@@ -2,7 +2,7 @@
 
 //Constructor
 ChipPanel::ChipPanel(int& balance, int& betAmount) : x(291), realY(-130), y(realY), balance(balance), 
-    betAmount(betAmount), tray("../resources/images/tray.png"),
+    betAmount(betAmount), tray("../resources/images/Tray.png"),
     chipDropSound("../resources/audio/chipDrop.wav"), errorSound("../resources/audio/error.wav") {
 
     loadChipTextures();

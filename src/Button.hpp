@@ -12,11 +12,11 @@ class Button {
         Button(int hideX, int hideY, int showX, int showY, const std::string& texturePath);
 
         void update();
-        void draw() const;
+        void draw();
         void hide();
         void show();
-        bool isPressed() const;
-        bool isMoving() const;
+        bool isPressed();
+        bool isMoving();
 
     private:
         raylib::Texture2D texture;            //button's texture sheet

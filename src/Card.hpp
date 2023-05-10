@@ -12,7 +12,7 @@ class Card {
         void update();
         void draw() const;
         void setLocation(int x, int y);
-        bool isMoving() const;
+        bool isMoving();
         int getValue() const;
         void setFacedown(bool boolean);
         bool getFacedown() const;

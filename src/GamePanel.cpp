@@ -121,16 +121,16 @@ void GamePanel::bet() {
     temporaryCard = new Card(getCardId(), 441, 40, cardTextures);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
-    cardDrawSound.PlayMulti();
-    cardSlideSound.PlayMulti();
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing player's first card
     temporaryCard = new Card(getCardId(), 479, 300, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
-    cardDrawSound.PlayMulti();
-    cardSlideSound.PlayMulti();
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     drawHands = true;
     
@@ -139,16 +139,16 @@ void GamePanel::bet() {
     temporaryCard->setFacedown(true);
     cards.push_back(temporaryCard);
     dealerHand.push_back(temporaryCard);
-    cardDrawSound.PlayMulti();
-    cardSlideSound.PlayMulti();
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Drawing player's second card
     temporaryCard = new Card(getCardId(), 501, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
-    cardDrawSound.PlayMulti();
-    cardSlideSound.PlayMulti();
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     while (temporaryCard->isMoving()) {}
 
     //Check if player got a blackjack
@@ -206,8 +206,8 @@ void GamePanel::hit() {
     Card* newCard = new Card(getCardId(), x + ((*hand).size() * 22), 300 - ((*hand).size() * 17), cardTextures);
     cards.push_back(newCard);
     (*hand).push_back(newCard);
-    cardDrawSound.PlayMulti();
-    cardSlideSound.PlayMulti();
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(750));
 
     //Check if player lost
@@ -256,7 +256,7 @@ void GamePanel::stand() {
             
             //Updating balance 3:2 betAmount
             balance += (betAmount * 3) / 2;
-            chipsDropSound.PlayMulti();
+            chipsDropSound.Play();
 
             std::this_thread::sleep_for(std::chrono::milliseconds(1500));
             clearGame();
@@ -293,7 +293,7 @@ void GamePanel::stand() {
     //Check if handOne won or tied
     if (getHandValue(dealerHand) > 21 || getHandValue(playerHandOne) > getHandValue(dealerHand)) {
         balance += betAmount * 2;
-        chipsDropSound.PlayMulti();
+        chipsDropSound.Play();
     } else if (getHandValue(playerHandOne) == getHandValue(dealerHand)) {
         balance += betAmount;
     }
@@ -301,7 +301,7 @@ void GamePanel::stand() {
     //Check if handTwo won or tied
     if (getHandValue(dealerHand) > 21 || getHandValue(playerHandTwo) > getHandValue(dealerHand)) {
         balance += betAmount * 2;
-        chipsDropSound.PlayMulti();
+        chipsDropSound.Play();
     } else if (getHandValue(playerHandTwo) == getHandValue(dealerHand)) {
         balance += betAmount;
     }
@@ -333,22 +333,22 @@ void GamePanel::split() {
     temporaryCard = new Card(getCardId(), 584, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
-    cardDrawSound.PlayMulti();
-    cardSlideSound.PlayMulti();
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Drawing second hand's second card
     temporaryCard = new Card(getCardId(), 418, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandTwo.push_back(temporaryCard);
-    cardDrawSound.PlayMulti();
-    cardSlideSound.PlayMulti();
+    cardDrawSound.Play();
+    cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(750));
 
     //Checking if left split hand has blackjack
     if (getHandValue(playerHandOne) == 21) {
         balance += (betAmount * 3) / 2;
-        chipsDropSound.PlayMulti();
+        chipsDropSound.Play();
         stand();
     }
 

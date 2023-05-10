@@ -14,7 +14,7 @@ void Button::update() {
 }
 
 //Draw button on the screen
-void Button::draw() const {
+void Button::draw() {
     
     //Checking if button is clickable (at showLocation)
     if (realLocation != showLocation) {
@@ -42,7 +42,7 @@ void Button::draw() const {
 }
 
 //Checks if button was pressed
-bool Button::isPressed() const {
+bool Button::isPressed() {
 
     //Checking if mouse left button was released
     if (!IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
@@ -69,6 +69,6 @@ void Button::show() {
 }
 
 //Method to check if button is currently moving
-bool Button::isMoving() const {
+bool Button::isMoving() {
     return realLocation != location;
 }

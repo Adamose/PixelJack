@@ -46,7 +46,7 @@ void Card::setLocation(int x, int y) {
 }
 
 //Method to check if card is currently moving
-bool Card::isMoving() const {
+bool Card::isMoving() {
     return realLocation != location;
 }
 

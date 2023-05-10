@@ -129,7 +129,7 @@ void ChipPanel::registerBets() {
 
         //Updating betAmount
         betAmount += bet;
-        chipDropSound.PlayMulti();
+        chipDropSound.Play();
         return;
     }
 }

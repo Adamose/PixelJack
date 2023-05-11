@@ -10,12 +10,14 @@
 #include "Card.hpp"
 #include "ChipPanel.hpp"
 #include "Button.hpp"
+#include "MessageBoard.hpp"
 
 class GamePanel {
 
     public:
         GamePanel();
         ~GamePanel();
+        
         void draw();
 
     private:
@@ -49,6 +51,7 @@ class GamePanel {
         Button standButton;
         Button splitButton;
         ChipPanel chipPanel;                    //chipPanel used to get user's bet
+        MessageBoard messageBoard;              //messageBoard used to display win/lose after rounds
         raylib::Sound cardDrawSound;
         raylib::Sound cardSlideSound;
         raylib::Sound cardFlipSound;

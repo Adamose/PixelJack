@@ -10,6 +10,7 @@ GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(
 
     chipPanel.show();
     betButton.show();
+    messageBoard.show();
     
     loadCardTextures();
 }
@@ -41,13 +42,14 @@ void GamePanel::update() {
     standButton.update();
     splitButton.update();
     chipPanel.update();
+    messageBoard.update();
 
     //Checking if we can handle buttons presses (handler thread avaible)
     if (threadAvailable) {
 
         //Checking for button presses (button handlers are async)
-        if (betButton.isPressed()) { threadAvailable = false; std::thread ([this] { bet(); }).detach(); return; }
-        if (hitButton.isPressed()) { threadAvailable = false; std::thread ([this] { hit(); }).detach(); return; }
+        if (betButton.isPressed()) { threadAvailable = false; std::thread([this] { bet(); }).detach(); return; }
+        if (hitButton.isPressed()) { threadAvailable = false; std::thread([this] { hit(); }).detach(); return; }
         if (standButton.isPressed()) { threadAvailable = false; std::thread([this] { stand(); }).detach(); return; }
         if (splitButton.isPressed()) { threadAvailable = false; std::thread([this] { split(); }).detach(); return; }
     }
@@ -83,6 +85,7 @@ void GamePanel::draw() {
     standButton.draw();
     splitButton.draw();
     chipPanel.draw();
+    messageBoard.draw();
    
     //Drawing hand values
     if (drawHands) drawHandValues();
@@ -113,6 +116,7 @@ void GamePanel::bet() {
     //Moving chip panel and bet button off screen
     chipPanel.hide();
     betButton.hide();
+    messageBoard.hide();
     while (chipPanel.isMoving()) {}
 
     Card* temporaryCard;

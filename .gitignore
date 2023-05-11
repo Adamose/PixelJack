@@ -3,4 +3,5 @@ GamePanel.o
 ChipPanel.o
 Card.o
 Button.o
+MessageBoard.o
 PixelJack.exe

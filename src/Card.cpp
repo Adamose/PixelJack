@@ -12,11 +12,11 @@ void Card::update() {
         return;
     }
 
-    float speed = 0.15;
+    float speed = 0.15f;
 
     //Check if card is being discarded
     if (location.x == -141) {
-        speed = 0.07;
+        speed = 0.07f;
     }
 
     //Use linear interpolation to move card

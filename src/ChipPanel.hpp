@@ -28,7 +28,6 @@ class ChipPanel {
         raylib::Texture2D tray;                 //tray texture
         raylib::Sound chipDropSound;            //Sound used when selecting a chip
         raylib::Sound errorSound;               //Sound used for invalid bet increases
-        
         const int x;
 
 };

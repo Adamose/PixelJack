@@ -6,15 +6,22 @@ GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(
     balancePanel("../resources/images/BalancePanel.png"), cardDrawSound("../resources/audio/cardDraw.wav"), chipPanel(balance, betAmount), inGame(false), 
     chipsDropSound("../resources/audio/chipsDrop.wav"), cardSlideSound("../resources/audio/cardSlide.wav"), errorSound("../resources/audio/error.wav"), 
     cardFlipSound("../resources/audio/cardFlip.wav"), betPanel("../resources/images/BetPanel.png"), threadAvailable(true), drawHands(false), 
-    playerSplit(false), handOneActive(true) {
+    playerSplit(false), handOneActive(true), handOneHasBlackjack(false) {
 
-    chipPanel.show();
-    betButton.show();
-    messageBoard.show();
-    messageBoard.setMessage(0);
-    messageBoard.setTitle(0);
-    
     loadCardTextures();
+
+    messageBoard.show();
+    messageBoard.setTitle(0);
+
+    //Waiting for user to click on screen to start game (async to not prevent drawing)
+    std::thread([this] {  
+
+        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+        this->messageBoard.hide();
+        this->chipPanel.show();
+        this->betButton.show();
+
+    }).detach();
 }
 
 GamePanel::~GamePanel() {
@@ -132,7 +139,7 @@ void GamePanel::bet() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing player's first card
-    temporaryCard = new Card(getCardId(), 479, 300, cardTextures);
+    temporaryCard = new Card(50, 479, 300, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     cardDrawSound.Play();
@@ -150,7 +157,7 @@ void GamePanel::bet() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Drawing player's second card
-    temporaryCard = new Card(getCardId(), 501, 283, cardTextures);
+    temporaryCard = new Card(50, 501, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     cardDrawSound.Play();
@@ -167,16 +174,24 @@ void GamePanel::bet() {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         
         //Check if dealer also got blackjack
+        if (getHandValue(dealerHand) == 21) {
+            messageBoard.setMessage(0);
+            messageBoard.setTitle(3);
+            balance += betAmount;
 
-        //Updating balance 3:2 betAmount
-        balance += (betAmount * 3) / 2;
-        chipsDropSound.Play();
+        } else {
+            int profit = (betAmount * 3) / 2;
+            balance += profit + betAmount;
+            chipsDropSound.Play();
+            messageBoard.setMessage(profit);
+            messageBoard.setTitle(4);
+        }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        messageBoard.show();
+        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
         clearGame();
 
         threadAvailable = true;
-        return;
     }
 
     //Showing action buttons
@@ -223,6 +238,39 @@ void GamePanel::hit() {
         if (playerSplit && hand == &playerHandOne) {
             handOneActive = false;
         } else {
+            
+            if (playerSplit) {
+
+                //Check if right hand is still playing
+                if (getHandValue(playerHandOne) <= 21) {
+
+                    if (!handOneHasBlackjack) {
+                        stand();
+                        return;
+                    }
+                    
+                    messageBoard.setTitle(12);
+                    messageBoard.setMessage(betAmount / 2);
+                    balance += betAmount / 2;
+                    balance += betAmount;
+
+                } else {
+                    messageBoard.setTitle(6);
+                    messageBoard.setMessage(betAmount * -2);
+                }
+
+            } else {
+                messageBoard.setTitle(2);
+                messageBoard.setMessage(betAmount * -1);
+            }
+
+            //Reveal dealer card
+            cardFlipSound.Play();
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            dealerHand[1]->setFacedown(false);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+            messageBoard.show();
             while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
             clearGame();
         }
@@ -236,6 +284,7 @@ void GamePanel::hit() {
             handOneActive = false;
         } else {
             stand();
+            return;
         }
     }
 
@@ -251,7 +300,7 @@ void GamePanel::stand() {
 
         handOneActive = false;
 
-        //Checking if right split hand has blackjack
+        //Checking if left split hand has blackjack
         if (getHandValue(playerHandTwo) == 21) {
 
             //Reveal dealer card
@@ -260,11 +309,32 @@ void GamePanel::stand() {
             dealerHand[1]->setFacedown(false);
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             
-            //Updating balance 3:2 betAmount
+            int gain = (betAmount * 3) / 2;
             balance += (betAmount * 3) / 2;
+            balance += betAmount;
             chipsDropSound.Play();
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+            //Check if right hand won
+            if (getHandValue(playerHandOne) <= 21 && (getHandValue(dealerHand) > 21 || getHandValue(playerHandOne) > getHandValue(dealerHand))) {
+                 
+                gain += betAmount;
+                messageBoard.setTitle(11);
+                messageBoard.setMessage(gain);
+                balance += betAmount * 2;
+            
+            } else if (getHandValue(playerHandOne) == getHandValue(dealerHand)) {
+                messageBoard.setTitle(13);
+                messageBoard.setMessage(gain);
+                balance += betAmount;
+
+            } else {
+                gain -= betAmount;
+                messageBoard.setTitle(12);
+                messageBoard.setMessage(gain);
+            }
+
+            messageBoard.show();
+            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
             clearGame();
         }
 
@@ -296,22 +366,74 @@ void GamePanel::stand() {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000)); 
     }
 
+    int gain = 0;
+
     //Check if handOne won or tied
-    if (getHandValue(dealerHand) > 21 || getHandValue(playerHandOne) > getHandValue(dealerHand)) {
+    if (getHandValue(playerHandOne) <= 21 && (getHandValue(dealerHand) > 21 || getHandValue(playerHandOne) > getHandValue(dealerHand))) {
+        gain += betAmount;
         balance += betAmount * 2;
         chipsDropSound.Play();
-    } else if (getHandValue(playerHandOne) == getHandValue(dealerHand)) {
+        messageBoard.setTitle(1); 
+        
+    } else if (getHandValue(playerHandOne) <= 21 && getHandValue(playerHandOne) == getHandValue(dealerHand)) {
         balance += betAmount;
+        messageBoard.setTitle(3);
+    } else {
+        gain -= betAmount;
+        messageBoard.setTitle(2);
     }
 
     //Check if handTwo won or tied
-    if (getHandValue(dealerHand) > 21 || getHandValue(playerHandTwo) > getHandValue(dealerHand)) {
-        balance += betAmount * 2;
-        chipsDropSound.Play();
-    } else if (getHandValue(playerHandTwo) == getHandValue(dealerHand)) {
-        balance += betAmount;
+    if (playerSplit) {
+        if (getHandValue(playerHandTwo) <= 21 && (getHandValue(dealerHand) > 21 || getHandValue(playerHandTwo) > getHandValue(dealerHand))) {
+            gain += betAmount;
+            balance += betAmount * 2;
+            chipsDropSound.Play();
+            
+            if (handOneHasBlackjack) {
+                messageBoard.setTitle(11);
+            } else if (gain == betAmount * 2) {
+                messageBoard.setTitle(5);
+            } else if (gain == betAmount) {
+                messageBoard.setTitle(8);
+            } else {
+                messageBoard.setTitle(7);
+            }
+
+        } else if (getHandValue(playerHandTwo) <= 21 && getHandValue(playerHandTwo) == getHandValue(dealerHand)) {
+            balance += betAmount;
+
+            if (handOneHasBlackjack) {
+                messageBoard.setTitle(13);
+            } else if (gain == betAmount) {
+                messageBoard.setTitle(8);
+            } else if (gain == 0) {
+                messageBoard.setTitle(10);
+            } else {
+                messageBoard.setTitle(9);
+            }
+
+        } else {
+            gain -= betAmount;
+
+            if (handOneHasBlackjack) {
+                messageBoard.setTitle(12);
+            } else if (gain == 0) {
+                messageBoard.setTitle(7);
+            } else if (gain == betAmount * -1) {
+                messageBoard.setTitle(9);
+            } else {
+                messageBoard.setTitle(6);
+            }
+        }
+
+        if (handOneHasBlackjack) {
+            balance += betAmount / 2;
+            gain += betAmount / 2;
+        }
     }
     
+    messageBoard.setMessage(gain);
     messageBoard.show();
     while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
     clearGame();
@@ -322,6 +444,7 @@ void GamePanel::stand() {
 //Method called when the user pressed the split button
 void GamePanel::split() {
 
+    splitButton.hide();
     playerSplit = true;
     balance -= betAmount;
 
@@ -352,11 +475,31 @@ void GamePanel::split() {
     cardSlideSound.Play();
     std::this_thread::sleep_for(std::chrono::milliseconds(750));
 
-    //Checking if left split hand has blackjack
+    //Checking if right split hand has blackjack
     if (getHandValue(playerHandOne) == 21) {
-        balance += (betAmount * 3) / 2;
-        chipsDropSound.Play();
-        stand();
+        handOneHasBlackjack = true;
+
+        //CHecking if left split hand has blackjack
+        if (getHandValue(playerHandTwo) == 21) {
+            balance += betAmount * 3;
+            balance += betAmount * 2;
+            messageBoard.setTitle(14);
+            messageBoard.setMessage(betAmount * 3);
+
+            //Reveal dealer card
+            cardFlipSound.Play();
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            dealerHand[1]->setFacedown(false);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+            chipsDropSound.Play();
+            messageBoard.show();
+            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+            clearGame();
+
+        } else {
+            stand();
+        }
     }
 
     threadAvailable = true;
@@ -399,6 +542,7 @@ void GamePanel::clearGame() {
 
     playerSplit = false;
     handOneActive = true;
+    handOneHasBlackjack = false;
     inGame = false;
 }
 

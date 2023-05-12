@@ -1,7 +1,7 @@
 #include "MessageBoard.hpp"
 
-MessageBoard::MessageBoard() : realX(-300), x(-300), title("WIN"),
-    message("dealer busted"), board("../resources/images/Board.png"), font("../resources/misc/PixelCode.otf", 256), y(200) {}
+MessageBoard::MessageBoard() : realX(-300), x(-300), title("title"),
+    message("Click To Start"), board("../resources/images/Board.png"), font("../resources/misc/PixelCode.otf", 256), y(200) {}
 
 void MessageBoard::update() {
 
@@ -30,10 +30,10 @@ void MessageBoard::draw() const {
     board.Draw(realX, y);
 
     int width = font.MeasureText(title, 32.0f, 0.0f).GetX();
-    font.DrawText(title, raylib::Vector2(realX + 150 - (width / 2), 215), 32.0f, 0.0f);
+    font.DrawText(title, raylib::Vector2(realX + 150 - (width / 2), 220), 32.0f, 0.0f);
 
     width = font.MeasureText(message, 24.0f, 0.0f).GetX();
-    font.DrawText(message, raylib::Vector2(realX + 150 - (width / 2), 250), 24.0f, 0.0f);
+    font.DrawText(message, raylib::Vector2(realX + 150 - (width / 2), 255), 24.0f, 0.0f);
 }
 
 void MessageBoard::show() {
@@ -46,7 +46,7 @@ void MessageBoard::hide() {
 
 void MessageBoard::setMessage(int profit) {
    if (profit < 0) {
-        message = "You lost $" + std::to_string(profit);
+        message = "You lost $" + std::to_string(profit * -1);
    } else {
         message = "You made $" + std::to_string(profit);
    }
@@ -95,15 +95,22 @@ void MessageBoard::setTitle(int code) {
             break;
 
         case 10:
+            title = "TIE/TIE";
+            break;
+
+        case 11:
             title = "BLACKJACK/WIN";
             break;
         
-        case 11:
+        case 12:
             title = "BLACKJACK/LOSE";
             break;
 
-        case 12:
+        case 13:
             title = "BLACKJACK/TIE";
             break;
+
+        case 14:
+            title = "BLACKJAKC/BLACKJACK";
     }
 }

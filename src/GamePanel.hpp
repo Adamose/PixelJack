@@ -46,6 +46,7 @@ class GamePanel {
         bool inGame;                            //boolean used to determine if player is in a game (bet button is not on screen)
         bool threadAvailable;                   //boolean used to determine if we currently have a handler thread running
         bool drawHands;                         //boolean used to determine wether to draw hands' values
+        bool handOneHasBlackjack;               //boolean used to determine wether first hand after split had a blackjack
         Button betButton;
         Button hitButton;
         Button standButton;

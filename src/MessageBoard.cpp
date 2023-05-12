@@ -81,6 +81,7 @@ void MessageBoard::setTitle(int code) {
 
         case 4:
             title = "BLACKJACK";
+            break;
 
         case 5:
             title = "WIN/WIN";
@@ -120,6 +121,7 @@ void MessageBoard::setTitle(int code) {
 
         case 14:
             title = "BLACKJAKC/BLACKJACK";
+            break;
     }
 }
 

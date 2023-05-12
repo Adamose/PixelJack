@@ -13,13 +13,16 @@ class MessageBoard {
         void draw() const;
         void show();
         void hide();
-        void setMessage(const std::string& newMessage);
+        void setMessage(int profit);
+        void setTitle(int code);
 
     private:
         float realX;
         int x;
+        std::string title;
         std::string message;
         raylib::Texture2D board;
+        raylib::Font font;
         const int y;
 
 };

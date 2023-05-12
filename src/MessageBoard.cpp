@@ -1,7 +1,7 @@
 #include "MessageBoard.hpp"
 
-MessageBoard::MessageBoard() : realX(-300), x(-300), message("Winner"),
-    board("../resources/images/Board.png"), y(200) {}
+MessageBoard::MessageBoard() : realX(-300), x(-300), title("WIN"),
+    message("dealer busted"), board("../resources/images/Board.png"), font("../resources/misc/PixelCode.otf", 256), y(200) {}
 
 void MessageBoard::update() {
 
@@ -28,6 +28,12 @@ void MessageBoard::update() {
 
 void MessageBoard::draw() const {
     board.Draw(realX, y);
+
+    int width = font.MeasureText(title, 32.0f, 0.0f).GetX();
+    font.DrawText(title, raylib::Vector2(realX + 150 - (width / 2), 215), 32.0f, 0.0f);
+
+    width = font.MeasureText(message, 24.0f, 0.0f).GetX();
+    font.DrawText(message, raylib::Vector2(realX + 150 - (width / 2), 250), 24.0f, 0.0f);
 }
 
 void MessageBoard::show() {
@@ -38,6 +44,66 @@ void MessageBoard::hide() {
     x = 1100;
 }
 
-void MessageBoard::setMessage(const std::string& newMessage) {
-    message = newMessage;
+void MessageBoard::setMessage(int profit) {
+   if (profit < 0) {
+        message = "You lost $" + std::to_string(profit);
+   } else {
+        message = "You made $" + std::to_string(profit);
+   }
+}
+
+void MessageBoard::setTitle(int code) {
+    switch (code) {
+
+        case 0:
+            title = "PLAY";
+            break;
+
+        case 1:
+            title = "WIN";
+            break;
+
+        case 2:
+            title = "LOSE";
+            break;
+
+        case 3:
+            title = "TIE";
+            break;
+
+        case 4:
+            title = "BLACKJACK";
+
+        case 5:
+            title = "WIN/WIN";
+            break;
+
+        case 6:
+            title = "LOSE/LOSE";
+            break;
+
+        case 7:
+            title = "WIN/LOSE";
+            break;
+
+        case 8:
+            title = "WIN/TIE";
+            break;
+
+        case 9:
+            title = "LOSE/TIE";
+            break;
+
+        case 10:
+            title = "BLACKJACK/WIN";
+            break;
+        
+        case 11:
+            title = "BLACKJACK/LOSE";
+            break;
+
+        case 12:
+            title = "BLACKJACK/TIE";
+            break;
+    }
 }

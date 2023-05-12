@@ -50,8 +50,8 @@ class GamePanel {
         Button hitButton;
         Button standButton;
         Button splitButton;
-        ChipPanel chipPanel;                    //chipPanel used to get user's bet
-        MessageBoard messageBoard;              //messageBoard used to display win/lose after rounds
+        ChipPanel chipPanel;
+        MessageBoard messageBoard;
         raylib::Sound cardDrawSound;
         raylib::Sound cardSlideSound;
         raylib::Sound cardFlipSound;

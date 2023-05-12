@@ -11,6 +11,8 @@ GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(
     chipPanel.show();
     betButton.show();
     messageBoard.show();
+    messageBoard.setMessage(0);
+    messageBoard.setTitle(0);
     
     loadCardTextures();
 }
@@ -310,6 +312,7 @@ void GamePanel::stand() {
         balance += betAmount;
     }
     
+    messageBoard.show();
     while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
     clearGame();
 
@@ -374,6 +377,7 @@ void GamePanel::clearGame() {
     standButton.hide();
     hitButton.hide();
     splitButton.hide();
+    messageBoard.hide();
     
     //Wait for all elements to be off screen
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));

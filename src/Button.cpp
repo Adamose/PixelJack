@@ -19,7 +19,7 @@ void Button::draw() {
     //Checking if button is clickable (at showLocation)
     if (realLocation != showLocation) {
         texture.Draw(raylib::Rectangle(0, 0, 30, 15), raylib::Rectangle(realLocation.x, realLocation.y, 90, 45), raylib::Vector2(0, 0), 0.0f, LIGHTGRAY);
-        return;
+        return; 
     }
 
     //Checking if mouse is hovering over button

@@ -143,7 +143,7 @@ void GamePanel::bet() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing player's first card
-    temporaryCard = new Card(50, 479, 300, cardTextures);
+    temporaryCard = new Card(getCardId(), 479, 300, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     cardDrawSound.Play();
@@ -161,7 +161,7 @@ void GamePanel::bet() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Drawing player's second card
-    temporaryCard = new Card(2, 501, 283, cardTextures);
+    temporaryCard = new Card(getCardId(), 501, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     cardDrawSound.Play();

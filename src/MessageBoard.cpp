@@ -1,6 +1,6 @@
 #include "MessageBoard.hpp"
 
-MessageBoard::MessageBoard() : realX(-300), x(-300), title("title"),
+MessageBoard::MessageBoard() : realX(-310), x(-310), title("title"),
     message("Click To Start"), board("../resources/images/Board.png"), font("../resources/misc/PixelCode.otf", 256), y(200) {}
 
 void MessageBoard::update() {
@@ -11,8 +11,9 @@ void MessageBoard::update() {
     }
 
     //Checking if board is done moving and needs to be reset to the left
-    if (realX == 1100) {
-        realX = -300;
+    if (realX >= 1025) {
+        x = -310;
+        realX = -310;
         return;
     }
 
@@ -41,7 +42,9 @@ void MessageBoard::show() {
 }
 
 void MessageBoard::hide() {
-    x = 1100;
+    if (x != -310) {
+        x = 1100;
+    }
 }
 
 void MessageBoard::setMessage(int profit) {
@@ -54,6 +57,11 @@ void MessageBoard::setMessage(int profit) {
 
 void MessageBoard::setTitle(int code) {
     switch (code) {
+
+        case -1:
+            title = "Enter Bet";
+            message = "Click on chips to bet";
+            break;
 
         case 0:
             title = "PLAY";
@@ -113,4 +121,8 @@ void MessageBoard::setTitle(int code) {
         case 14:
             title = "BLACKJAKC/BLACKJACK";
     }
+}
+
+int MessageBoard::getX() {
+    return x;
 }

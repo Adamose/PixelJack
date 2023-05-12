@@ -15,6 +15,7 @@ class MessageBoard {
         void hide();
         void setMessage(int profit);
         void setTitle(int code);
+        int getX();
 
     private:
         float realX;

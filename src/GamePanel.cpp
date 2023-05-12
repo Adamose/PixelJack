@@ -18,8 +18,11 @@ GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(
 
         while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
         this->messageBoard.hide();
+        while (this->messageBoard.getX() != -310) {}
         this->chipPanel.show();
         this->betButton.show();
+        this->messageBoard.setTitle(-1);
+        this->messageBoard.show();
 
     }).detach();
 }
@@ -110,6 +113,7 @@ void GamePanel::drawMenu() const {
 
 //Method called when the user pressed the bet button (runs on side thread)
 void GamePanel::bet() {
+    messageBoard.hide();
 
     //Checking if bet is invalid
     if (betAmount == 0 || betAmount > balance) {
@@ -139,7 +143,7 @@ void GamePanel::bet() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     //Drawing player's first card
-    temporaryCard = new Card(50, 479, 300, cardTextures);
+    temporaryCard = new Card(getCardId(), 479, 300, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     cardDrawSound.Play();
@@ -157,7 +161,7 @@ void GamePanel::bet() {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Drawing player's second card
-    temporaryCard = new Card(50, 501, 283, cardTextures);
+    temporaryCard = new Card(getCardId(), 501, 283, cardTextures);
     cards.push_back(temporaryCard);
     playerHandOne.push_back(temporaryCard);
     cardDrawSound.Play();
@@ -544,6 +548,9 @@ void GamePanel::clearGame() {
     handOneActive = true;
     handOneHasBlackjack = false;
     inGame = false;
+
+    messageBoard.setTitle(-1);
+    messageBoard.show();
 }
 
 //Method to load the 53 card textures into an array

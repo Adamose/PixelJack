@@ -16,9 +16,13 @@ GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(
     //Waiting for user to click on screen to start game (async to not prevent drawing)
     std::thread([this] {  
 
-        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(33));
+        }
         this->messageBoard.hide();
-        while (this->messageBoard.getX() != -310) {}
+        while (this->messageBoard.getX() != -310) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(33));
+        }
         this->chipPanel.show();
         this->betButton.show();
         this->messageBoard.setTitle(-1);
@@ -113,7 +117,6 @@ void GamePanel::drawMenu() const {
 
 //Method called when the user pressed the bet button (runs on side thread)
 void GamePanel::bet() {
-    messageBoard.hide();
 
     //Checking if bet is invalid
     if (betAmount == 0 || betAmount > balance) {
@@ -121,6 +124,8 @@ void GamePanel::bet() {
         threadAvailable = true;
         return;
     }
+
+    messageBoard.hide();
 
     //Updating balance
     inGame = true;
@@ -130,7 +135,9 @@ void GamePanel::bet() {
     chipPanel.hide();
     betButton.hide();
     messageBoard.hide();
-    while (chipPanel.isMoving()) {}
+    while (chipPanel.isMoving()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(33));
+    }
 
     Card* temporaryCard;
 
@@ -166,7 +173,9 @@ void GamePanel::bet() {
     playerHandOne.push_back(temporaryCard);
     cardDrawSound.Play();
     cardSlideSound.Play();
-    while (temporaryCard->isMoving()) {}
+    while (temporaryCard->isMoving()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(33));
+    }
 
     //Check if player got a blackjack
     if (getHandValue(playerHandOne) == 21) {
@@ -192,7 +201,9 @@ void GamePanel::bet() {
         }
 
         messageBoard.show();
-        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && messageBoard.getTimerWidth() != 0) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(33));
+        }
         clearGame();
 
         threadAvailable = true;
@@ -276,7 +287,9 @@ void GamePanel::hit() {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
             messageBoard.show();
-            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(33));
+            }
             clearGame();
         }
     }
@@ -339,7 +352,9 @@ void GamePanel::stand() {
             }
 
             messageBoard.show();
-            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(33));
+            }
             clearGame();
         }
 
@@ -440,7 +455,9 @@ void GamePanel::stand() {
     
     messageBoard.setMessage(gain);
     messageBoard.show();
-    while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+    while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(33));
+    }
     clearGame();
 
     threadAvailable = true;
@@ -499,7 +516,9 @@ void GamePanel::split() {
 
             chipsDropSound.Play();
             messageBoard.show();
-            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(33));
+            }
             clearGame();
 
         } else {
@@ -535,10 +554,6 @@ void GamePanel::clearGame() {
         delete card;
     }
 
-    //Showing chipPanel and betButton
-    chipPanel.show();
-    betButton.show();
-
     //Emptying arrays
     dealerHand.clear();
     playerHandOne.clear();
@@ -550,7 +565,15 @@ void GamePanel::clearGame() {
     handOneHasBlackjack = false;
     inGame = false;
 
-    messageBoard.setTitle(-1);
+    //Check if game is over
+    if (balance == 0) {
+        messageBoard.setTitle(-2);
+    } else {
+        messageBoard.setTitle(-1);
+        chipPanel.show();
+        betButton.show();
+    }
+
     messageBoard.show();
 }
 

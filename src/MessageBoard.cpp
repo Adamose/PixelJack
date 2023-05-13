@@ -1,7 +1,7 @@
 #include "MessageBoard.hpp"
 
-MessageBoard::MessageBoard() : realX(-310), x(-310), title("title"),
-    message("Click To Start"), board("../resources/images/Board.png"), font("../resources/misc/PixelCode.otf", 256), y(200) {}
+MessageBoard::MessageBoard() : realX(-310), x(-310), title("title"), showTimer(false),timerWidth(200),
+    message("Click To Start"), board("../resources/images/Board.png"), font("../resources/misc/PixelCode.otf", 256), y(196) {}
 
 void MessageBoard::update() {
 
@@ -27,7 +27,7 @@ void MessageBoard::update() {
     }
 }
 
-void MessageBoard::draw() const {
+void MessageBoard::draw() {
     board.Draw(realX, y);
 
     int width = font.MeasureText(title, 32.0f, 0.0f).GetX();
@@ -35,10 +35,16 @@ void MessageBoard::draw() const {
 
     width = font.MeasureText(message, 24.0f, 0.0f).GetX();
     font.DrawText(message, raylib::Vector2(realX + 150 - (width / 2), 255), 24.0f, 0.0f);
+
+    if (showTimer && realX == 358) {
+        DrawLineEx(raylib::Vector2(512 - timerWidth / 2, 253), raylib::Vector2(512 + timerWidth / 2, 253), 2, LIGHTGRAY);
+        DrawCircle(512, 253, 5, GRAY);
+        timerWidth -= 2;
+    }
 }
 
 void MessageBoard::show() {
-    x = 362;
+    x = 358;
 }
 
 void MessageBoard::hide() {
@@ -56,15 +62,26 @@ void MessageBoard::setMessage(int profit) {
 }
 
 void MessageBoard::setTitle(int code) {
+    showTimer = true;
+    timerWidth = 200;
+
     switch (code) {
+
+        case -2:
+            title = "Game Over";
+            message = "Relaunch game to play";
+            showTimer = false;
+            break;
 
         case -1:
             title = "Enter Bet";
             message = "Click on chips to bet";
+            showTimer = false;
             break;
 
         case 0:
-            title = "PLAY";
+            title = "Play";
+            showTimer = false;
             break;
 
         case 1:
@@ -127,4 +144,8 @@ void MessageBoard::setTitle(int code) {
 
 int MessageBoard::getX() {
     return x;
+}
+
+int MessageBoard::getTimerWidth() {
+    return timerWidth;
 }

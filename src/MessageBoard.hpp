@@ -10,12 +10,13 @@ class MessageBoard {
         MessageBoard();
 
         void update();
-        void draw() const;
+        void draw();
         void show();
         void hide();
         void setMessage(int profit);
         void setTitle(int code);
         int getX();
+        int getTimerWidth();
 
     private:
         float realX;
@@ -25,6 +26,8 @@ class MessageBoard {
         raylib::Texture2D board;
         raylib::Font font;
         const int y;
+        int timerWidth;
+        bool showTimer;
 
 };
 

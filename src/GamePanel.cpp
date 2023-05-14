@@ -19,10 +19,14 @@ GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(
         while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             std::this_thread::sleep_for(std::chrono::milliseconds(33));
         }
+
+        this->menu.setShow(false);
         this->messageBoard.hide();
+
         while (this->messageBoard.getX() != -310) {
             std::this_thread::sleep_for(std::chrono::milliseconds(33));
         }
+
         this->chipPanel.show();
         this->betButton.show();
         this->messageBoard.setTitle(-1);
@@ -101,6 +105,7 @@ void GamePanel::draw() {
     standButton.draw();
     splitButton.draw();
     chipPanel.draw();
+    menu.draw();
     messageBoard.draw();
    
     //Drawing hand values
@@ -568,6 +573,7 @@ void GamePanel::clearGame() {
     //Check if game is over
     if (balance == 0) {
         messageBoard.setTitle(-2);
+        menu.setShow(true);
     } else {
         messageBoard.setTitle(-1);
         chipPanel.show();

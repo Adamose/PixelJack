@@ -30,12 +30,15 @@ void MessageBoard::update() {
 void MessageBoard::draw() {
     board.Draw(realX, y);
 
+    //Drawing title
     int width = font.MeasureText(title, 32.0f, 0.0f).GetX();
-    font.DrawText(title, raylib::Vector2(realX + 150 - (width / 2), 220), 32.0f, 0.0f);
+    font.DrawText(title, raylib::Vector2(realX + 154 - (width / 2), 217), 32.0f, 0.0f);
 
+    //Drawing message
     width = font.MeasureText(message, 24.0f, 0.0f).GetX();
-    font.DrawText(message, raylib::Vector2(realX + 150 - (width / 2), 255), 24.0f, 0.0f);
+    font.DrawText(message, raylib::Vector2(realX + 154 - (width / 2), 255), 24.0f, 0.0f);
 
+    //If showing end game message, show timer bar and decrement timer
     if (showTimer && realX == 358) {
         DrawLineEx(raylib::Vector2(512 - timerWidth / 2, 253), raylib::Vector2(512 + timerWidth / 2, 253), 2, LIGHTGRAY);
         DrawCircle(512, 253, 5, GRAY);
@@ -43,10 +46,12 @@ void MessageBoard::draw() {
     }
 }
 
+//Center board
 void MessageBoard::show() {
     x = 358;
 }
 
+//Move board to right side of screen
 void MessageBoard::hide() {
     if (x != -310) {
         x = 1100;

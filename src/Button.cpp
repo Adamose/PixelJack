@@ -29,12 +29,12 @@ void Button::draw() {
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 
             //Drawing shorter button texture to give illusion of button being pressed
-            texture.Draw(raylib::Rectangle(0, 15, 30, 15), raylib::Rectangle(realLocation.x, realLocation.y, 90, 45), raylib::Vector2(0, 0), 0.0f);
+            texture.Draw(raylib::Rectangle(0, 15, 30, 15), raylib::Rectangle(realLocation.x, realLocation.y, 90, 45));
             return;
         }
 
         //Drawing brighter button to show it's clickable
-        texture.Draw(raylib::Rectangle(0, 0, 30, 15), raylib::Rectangle(realLocation.x, realLocation.y, 90, 45), raylib::Vector2(0, 0), 0.0f);
+        texture.Draw(raylib::Rectangle(0, 0, 30, 15), raylib::Rectangle(realLocation.x, realLocation.y, 90, 45));
         return;   
     }
 

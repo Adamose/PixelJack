@@ -11,6 +11,7 @@
 #include "ChipPanel.hpp"
 #include "Button.hpp"
 #include "MessageBoard.hpp"
+#include "Menu.hpp"
 
 class GamePanel {
 
@@ -52,6 +53,7 @@ class GamePanel {
         Button standButton;
         Button splitButton;
         ChipPanel chipPanel;
+        Menu menu;
         MessageBoard messageBoard;
         raylib::Sound cardDrawSound;
         raylib::Sound cardSlideSound;

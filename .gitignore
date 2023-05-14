@@ -4,5 +4,6 @@ ChipPanel.o
 Card.o
 Button.o
 MessageBoard.o
+Menu.o
 PixelJack.exe
 web-build

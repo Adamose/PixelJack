@@ -16,7 +16,9 @@ GamePanel::GamePanel() : background("../resources/images/table.png"), betButton(
     //Waiting for user to click on screen to start game (async to not prevent drawing)
     std::thread([this] {  
 
-        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {}
+        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
 
         this->menu.setShow(false);
         this->messageBoard.hide();
@@ -204,7 +206,9 @@ void GamePanel::bet() {
         }
 
         messageBoard.show();
-        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && messageBoard.getTimerWidth() != 0) {}
+        while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && messageBoard.getTimerWidth() != 0) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
         clearGame();
 
         threadAvailable = true;
@@ -288,7 +292,9 @@ void GamePanel::hit() {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
             messageBoard.show();
-            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {}
+            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
             clearGame();
         }
     }
@@ -351,7 +357,9 @@ void GamePanel::stand() {
             }
 
             messageBoard.show();
-            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {}
+            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
             clearGame();
         }
 
@@ -452,7 +460,9 @@ void GamePanel::stand() {
     
     messageBoard.setMessage(gain);
     messageBoard.show();
-    while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {}
+    while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
     clearGame();
 
     threadAvailable = true;
@@ -511,7 +521,9 @@ void GamePanel::split() {
 
             chipsDropSound.Play();
             messageBoard.show();
-            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {}
+            while (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)  && messageBoard.getTimerWidth() != 0) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
             clearGame();
 
         } else {

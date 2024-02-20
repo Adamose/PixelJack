@@ -1,7 +1,7 @@
-LIB = -lraylib -lopengl32 -lgdi32 -lwinmm
 OBJ = Main.o GamePanel.o ChipPanel.o Card.o Button.o MessageBoard.o Menu.o
 CPP = Main.cpp GamePanel.cpp ChipPanel.cpp Card.cpp Button.cpp MessageBoard.cpp Menu.cpp
-ARG = -L ../lib -I ../include ../resources/misc/PixelJack.res -mwindows
+LIB = -L../lib -lraylib -lopengl32 -lgdi32 -lwinmm
+ARG = ../resources/misc/PixelJack.res -mwindows
 
 all: $(OBJ)
 	g++ -o PixelJack $(OBJ) $(LIB) $(ARG)
